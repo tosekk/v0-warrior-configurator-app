@@ -19,20 +19,32 @@ export function Checkout({ productId, onSuccess }: CheckoutProps) {
 
   async function handleCreateOrder() {
     try {
+      console.log('[v0] Creating order for product:', productId)
       const orderData = await createPayPalOrder(productId)
+      console.log('[v0] Order data prepared:', orderData)
       
-      // Create order with PayPal
+      // Create order with PayPal API
       const response = await fetch('/api/paypal/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderData),
       })
       
+      if (!response.ok) {
+        throw new Error('Failed to create order')
+      }
+      
       const order = await response.json()
+      console.log('[v0] PayPal order created:', order.id)
+      
+      if (!order.id) {
+        throw new Error('No order ID returned from PayPal')
+      }
+      
       return order.id
     } catch (err) {
       console.error('[v0] Error creating order:', err)
-      setError('Failed to create order')
+      setError('Failed to create order. Please try again.')
       throw err
     }
   }

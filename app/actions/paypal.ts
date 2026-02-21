@@ -10,25 +10,35 @@ export async function createPayPalOrder(productId: string) {
       throw new Error('Product not found')
     }
 
-    // Return order data for PayPal SDK
+    const customId = JSON.stringify({
+      productId: product.id,
+      productType: product.type,
+      race: product.race || '',
+      slot: product.slot || '',
+      itemId: product.itemId || '',
+      bundleItems: product.bundleItems || [],
+    })
+
+    // Return order data for PayPal API
     return {
+      intent: 'CAPTURE',
       purchase_units: [
         {
-          description: product.description,
+          description: product.name,
+          custom_id: customId,
           amount: {
             currency_code: 'USD',
             value: (product.priceInCents / 100).toFixed(2),
           },
-          custom_id: JSON.stringify({
-            productId: product.id,
-            productType: product.type,
-            race: product.race || '',
-            slot: product.slot || '',
-            itemId: product.itemId || '',
-            bundleItems: product.bundleItems || [],
-          }),
         },
       ],
+      application_context: {
+        brand_name: 'Warrior Configurator',
+        landing_page: 'NO_PREFERENCE',
+        user_action: 'PAY_NOW',
+        return_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/checkout/return`,
+        cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}`,
+      },
     }
   } catch (error) {
     console.error('[v0] Error creating PayPal order:', error)

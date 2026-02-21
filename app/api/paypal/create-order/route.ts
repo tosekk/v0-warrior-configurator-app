@@ -25,7 +25,10 @@ async function getAccessToken() {
 export async function POST(request: NextRequest) {
   try {
     const orderData = await request.json()
+    console.log('[v0] Creating PayPal order with data:', JSON.stringify(orderData, null, 2))
+    
     const accessToken = await getAccessToken()
+    console.log('[v0] Got PayPal access token')
 
     const response = await fetch(`${PAYPAL_API_URL}/v2/checkout/orders`, {
       method: 'POST',
@@ -37,6 +40,16 @@ export async function POST(request: NextRequest) {
     })
 
     const order = await response.json()
+    console.log('[v0] PayPal API response:', JSON.stringify(order, null, 2))
+    
+    if (!response.ok) {
+      console.error('[v0] PayPal API error:', order)
+      return NextResponse.json(
+        { error: order.message || 'Failed to create order' },
+        { status: response.status }
+      )
+    }
+    
     return NextResponse.json(order)
   } catch (error) {
     console.error('[v0] Error creating PayPal order:', error)
