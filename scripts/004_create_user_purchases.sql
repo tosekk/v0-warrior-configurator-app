@@ -3,8 +3,8 @@ create table if not exists public.user_purchases (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
   product_id text not null,
-  stripe_session_id text, -- Renamed to keep compatibility, but stores Lemon Squeezy order ID
-  amount_paid integer not null default 0,
+  paypal_order_id text,
+  amount_paid numeric(10, 2) not null default 0,
   purchased_at timestamptz default now()
 );
 
@@ -27,5 +27,5 @@ create policy "purchases_insert_service"
 create index if not exists idx_user_purchases_user_id 
   on public.user_purchases(user_id);
 
-create index if not exists idx_user_purchases_stripe_session 
-  on public.user_purchases(stripe_session_id);
+create index if not exists idx_user_purchases_paypal_order 
+  on public.user_purchases(paypal_order_id);
