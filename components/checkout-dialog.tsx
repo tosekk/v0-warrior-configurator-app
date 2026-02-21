@@ -1,7 +1,9 @@
 'use client'
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { PayPalScriptProvider } from '@paypal/react-paypal-js'
 import { Checkout } from './checkout'
+import { paypalConfig } from '@/lib/paypal'
 
 interface CheckoutDialogProps {
   open: boolean
@@ -18,7 +20,18 @@ export function CheckoutDialog({ open, onOpenChange, productId }: CheckoutDialog
         <DialogHeader>
           <DialogTitle>Complete Your Purchase</DialogTitle>
         </DialogHeader>
-        <Checkout productId={productId} />
+        <PayPalScriptProvider
+          options={{
+            clientId: paypalConfig.clientId,
+            currency: paypalConfig.currency,
+            intent: paypalConfig.intent,
+          }}
+        >
+          <Checkout 
+            productId={productId} 
+            onSuccess={() => onOpenChange(false)}
+          />
+        </PayPalScriptProvider>
       </DialogContent>
     </Dialog>
   )
