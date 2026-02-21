@@ -80,6 +80,7 @@ export default function Home() {
       console.log('[v0] Loaded saved configuration for', race, ':', loadedConfig)
     } else {
       console.log('[v0] No saved configuration found for', race)
+    }
     
     // Load purchased items (filter by current race)
     const { data: purchasesData } = await supabase
