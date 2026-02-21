@@ -54,22 +54,43 @@ export async function saveConfiguration(
   const operation = existingCheck.exists ? 'update' : 'insert'
   console.log('[v0] Operation type:', operation)
   
-  // Use upsert which handles both insert and update
-  const { data, error } = await supabase
-    .from('warrior_configurations')
-    .upsert({
-      user_id: userId,
-      race: configData.race,
-      helmet: configData.helmet,
-      armor: configData.armor,
-      weapon: configData.weapon,
-      facial_hair: configData.facial_hair,
-      updated_at: new Date().toISOString()
-    }, {
-      onConflict: 'user_id'
-    })
-    .select()
-    .single()
+  let data, error
+  
+  if (existingCheck.exists) {
+    // UPDATE existing configuration
+    const updateResult = await supabase
+      .from('warrior_configurations')
+      .update({
+        helmet: configData.helmet,
+        armor: configData.armor,
+        weapon: configData.weapon,
+        facial_hair: configData.facial_hair,
+        updated_at: new Date().toISOString()
+      })
+      .eq('user_id', userId)
+      .select()
+      .single()
+    
+    data = updateResult.data
+    error = updateResult.error
+  } else {
+    // INSERT new configuration
+    const insertResult = await supabase
+      .from('warrior_configurations')
+      .insert({
+        user_id: userId,
+        race: configData.race,
+        helmet: configData.helmet,
+        armor: configData.armor,
+        weapon: configData.weapon,
+        facial_hair: configData.facial_hair
+      })
+      .select()
+      .single()
+    
+    data = insertResult.data
+    error = insertResult.error
+  }
   
   if (error) {
     console.error('[v0] Error saving configuration:', error)
