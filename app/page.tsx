@@ -13,6 +13,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useToast } from '@/hooks/use-toast'
 import { validateRaceConfiguration, validateItemOwnership } from '@/lib/validation'
+import { saveConfiguration, checkExistingConfiguration } from '@/app/actions/configuration'
 
 export default function Home() {
   const [race, setRace] = useState<'human' | 'goblin'>('human')
@@ -170,28 +171,26 @@ export default function Home() {
       return
     }
 
-    const supabase = createClient()
+    // Check if configuration already exists
+    const existingCheck = await checkExistingConfiguration(user.id)
+    const isUpdate = existingCheck.exists
     
-    // Use upsert with user_id as the conflict key (now only one config per user)
-    const { error } = await supabase
-      .from('warrior_configurations')
-      .upsert({
-        user_id: user.id,
-        race,
-        helmet: config.helmet,
-        armor: config.armor,
-        weapon: config.weapon,
-        facial_hair: config.facialHair,
-        updated_at: new Date().toISOString()
-      }, {
-        onConflict: 'user_id'
-      })
+    console.log('[v0] Configuration exists:', isUpdate, 'Will perform:', isUpdate ? 'UPDATE' : 'INSERT')
     
-    if (error) {
-      console.error('[v0] Error saving configuration:', error)
+    // Save configuration using server action
+    const result = await saveConfiguration(user.id, {
+      race,
+      helmet: config.helmet,
+      armor: config.armor,
+      weapon: config.weapon,
+      facial_hair: config.facialHair
+    })
+    
+    if (!result.success) {
+      console.error('[v0] Error saving configuration:', result.error)
       toast({
         title: 'Error Saving Configuration',
-        description: error.message || 'Failed to save your warrior configuration. Please try again.',
+        description: result.error || 'Failed to save your warrior configuration. Please try again.',
         variant: 'destructive'
       })
     } else {
@@ -199,20 +198,21 @@ export default function Home() {
       if (!isRaceLocked) {
         setIsRaceLocked(true)
         setLockedRace(race)
-        console.log('[v0] Race locked to:', race)
+        console.log('[v0] Race locked to:', race, 'after', result.operation)
       }
       
       // Update saved configs state
       setSavedConfigs({ [race]: config })
-      console.log('[v0] Configuration saved successfully')
+      console.log('[v0] Configuration saved successfully via', result.operation)
       
-      const lockMessage = isRaceLocked 
-        ? ''
-        : ` You are now permanently locked to ${race} warrior.`
+      const operationText = result.operation === 'insert' ? 'created' : 'updated'
+      const lockMessage = result.operation === 'insert' 
+        ? ` You are now permanently locked to ${race} warrior.`
+        : ''
       
       toast({
-        title: 'Configuration Saved!',
-        description: `Your ${race} warrior configuration has been saved successfully.${lockMessage}`,
+        title: `Configuration ${operationText.charAt(0).toUpperCase() + operationText.slice(1)}!`,
+        description: `Your ${race} warrior configuration has been ${operationText} successfully.${lockMessage}`,
       })
     }
   }
