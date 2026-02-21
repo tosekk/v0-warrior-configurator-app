@@ -5,6 +5,7 @@ import { WarriorScene } from '@/components/warrior-scene'
 import { CustomizationPanel } from '@/components/customization-panel'
 import { AuthDialog } from '@/components/auth-dialog'
 import { CheckoutDialog } from '@/components/checkout-dialog'
+import { RaceConfirmationDialog } from '@/components/race-confirmation-dialog'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -12,6 +13,7 @@ import { User, LogOut, Save } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useToast } from '@/hooks/use-toast'
+import { validateRaceConfiguration, validateItemOwnership } from '@/lib/validation'
 
 export default function Home() {
   const [race, setRace] = useState<'human' | 'goblin'>('human')
@@ -26,6 +28,9 @@ export default function Home() {
   const [authDialogOpen, setAuthDialogOpen] = useState(false)
   const [checkoutDialogOpen, setCheckoutDialogOpen] = useState(false)
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null)
+  const [raceDialogOpen, setRaceDialogOpen] = useState(false)
+  const [pendingRace, setPendingRace] = useState<'human' | 'goblin' | null>(null)
+  const [savedConfigs, setSavedConfigs] = useState<{ [key: string]: any }>({})
   const router = useRouter()
   const { toast } = useToast()
 
@@ -53,7 +58,9 @@ export default function Home() {
   async function loadUserData(userId: string) {
     const supabase = createClient()
     
-    // Load warrior configuration
+    console.log('[v0] Loading user data for race:', race)
+    
+    // Load warrior configuration for current race
     const { data: configData } = await supabase
       .from('warrior_configurations')
       .select('*')
@@ -62,15 +69,19 @@ export default function Home() {
       .single()
     
     if (configData) {
-      setConfig({
+      const loadedConfig = {
         helmet: configData.helmet || 'none',
         armor: configData.armor || 'none',
         weapon: configData.weapon || 'none',
         facialHair: configData.facial_hair || 'none'
-      })
-    }
+      }
+      setConfig(loadedConfig)
+      setSavedConfigs(prev => ({ ...prev, [race]: loadedConfig }))
+      console.log('[v0] Loaded saved configuration for', race, ':', loadedConfig)
+    } else {
+      console.log('[v0] No saved configuration found for', race)
     
-    // Load purchased items
+    // Load purchased items (filter by current race)
     const { data: purchasesData } = await supabase
       .from('user_purchases')
       .select('product_id')
@@ -83,16 +94,30 @@ export default function Home() {
       const completeBundleId = race === 'human' ? 'human-complete-bundle' : 'goblin-complete-bundle'
       const ownsCompleteBundle = purchasedProductIds.includes(completeBundleId)
       
+      console.log('[v0] User owns complete bundle for', race, ':', ownsCompleteBundle)
+      
       if (ownsCompleteBundle) {
-        // If they own complete bundle, mark all items as owned
+        // If they own complete bundle, mark all items as owned for this race
         import('@/lib/products').then(({ getProductsByRace }) => {
           const allRaceItems = getProductsByRace(race)
             .filter(p => p.type === 'item')
             .map(p => p.id)
-          setOwnedItems([...purchasedProductIds, ...allRaceItems])
+          
+          // Only include purchased items that belong to the current race
+          const raceSpecificPurchases = purchasedProductIds.filter(id => {
+            return id.startsWith(race === 'human' ? 'human-' : 'goblin-')
+          })
+          
+          setOwnedItems([...raceSpecificPurchases, ...allRaceItems])
+          console.log('[v0] Owned items for', race, ':', [...raceSpecificPurchases, ...allRaceItems].length, 'items')
         })
       } else {
-        setOwnedItems(purchasedProductIds)
+        // Only show purchased items for the current race
+        const raceSpecificPurchases = purchasedProductIds.filter(id => {
+          return id.startsWith(race === 'human' ? 'human-' : 'goblin-')
+        })
+        setOwnedItems(raceSpecificPurchases)
+        console.log('[v0] Owned items for', race, ':', raceSpecificPurchases.length, 'items')
       }
     }
   }
@@ -100,6 +125,32 @@ export default function Home() {
   async function handleSaveConfiguration() {
     if (!user) {
       setAuthDialogOpen(true)
+      return
+    }
+
+    console.log('[v0] Saving configuration for race:', race, config)
+    
+    // Validate that all items belong to the current race
+    const raceValidation = validateRaceConfiguration(race, config)
+    if (!raceValidation.valid) {
+      console.error('[v0] Race validation failed:', raceValidation.errors)
+      toast({
+        title: 'Invalid Configuration',
+        description: raceValidation.errors.join(', '),
+        variant: 'destructive'
+      })
+      return
+    }
+    
+    // Validate item ownership
+    const ownershipValidation = validateItemOwnership(race, config, ownedItems)
+    if (!ownershipValidation.valid) {
+      console.error('[v0] Ownership validation failed:', ownershipValidation.errors)
+      toast({
+        title: 'Items Not Owned',
+        description: ownershipValidation.errors[0] || 'You must purchase these items first.',
+        variant: 'destructive'
+      })
       return
     }
 
@@ -127,6 +178,9 @@ export default function Home() {
         variant: 'destructive'
       })
     } else {
+      // Update saved configs state
+      setSavedConfigs(prev => ({ ...prev, [race]: config }))
+      console.log('[v0] Configuration saved successfully')
       toast({
         title: 'Configuration Saved!',
         description: `Your ${race} warrior configuration has been saved successfully.`,
@@ -183,19 +237,54 @@ export default function Home() {
   }
 
   function handleRaceChange(newRace: 'human' | 'goblin') {
+    if (newRace === race) return
+    
+    console.log('[v0] User wants to switch from', race, 'to', newRace)
+    
+    // Check if current config differs from saved config
+    const hasUnsavedChanges = user && savedConfigs[race] && (
+      config.helmet !== savedConfigs[race].helmet ||
+      config.armor !== savedConfigs[race].armor ||
+      config.weapon !== savedConfigs[race].weapon ||
+      config.facialHair !== savedConfigs[race].facialHair
+    )
+    
+    console.log('[v0] Has unsaved changes:', hasUnsavedChanges)
+    
+    // Show confirmation dialog
+    setPendingRace(newRace)
+    setRaceDialogOpen(true)
+  }
+  
+  function confirmRaceChange() {
+    if (!pendingRace) return
+    
+    console.log('[v0] Confirmed race switch to:', pendingRace)
+    
+    const newRace = pendingRace
     setRace(newRace)
-    // Reset config when changing race
-    setConfig({
+    
+    // Reset config to default when changing race
+    const defaultConfig = {
       helmet: 'none',
       armor: 'none',
       weapon: 'none',
       facialHair: 'none'
-    })
+    }
+    setConfig(defaultConfig)
     
-    // Load config for new race if user is logged in
+    // Load saved config for new race if user is logged in
     if (user) {
       loadUserData(user.id)
     }
+    
+    toast({
+      title: `Switched to ${newRace === 'human' ? 'Human' : 'Goblin'} Warrior`,
+      description: `Configuration loaded for ${newRace} warrior. Items are filtered by race.`,
+    })
+    
+    setRaceDialogOpen(false)
+    setPendingRace(null)
   }
 
   return (
@@ -278,6 +367,18 @@ export default function Home() {
         open={checkoutDialogOpen}
         onOpenChange={setCheckoutDialogOpen}
         productId={selectedProductId}
+      />
+      <RaceConfirmationDialog
+        open={raceDialogOpen}
+        onOpenChange={setRaceDialogOpen}
+        onConfirm={confirmRaceChange}
+        newRace={pendingRace || 'human'}
+        hasUnsavedChanges={user && savedConfigs[race] ? (
+          config.helmet !== savedConfigs[race]?.helmet ||
+          config.armor !== savedConfigs[race]?.armor ||
+          config.weapon !== savedConfigs[race]?.weapon ||
+          config.facialHair !== savedConfigs[race]?.facialHair
+        ) : false}
       />
     </div>
   )
