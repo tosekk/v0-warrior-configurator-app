@@ -1,35 +1,45 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { EmbeddedCheckoutProvider, EmbeddedCheckout } from '@stripe/react-stripe-js'
-import { loadStripe } from '@stripe/stripe-js'
-import { startCheckoutSession } from '@/app/actions/stripe'
+import { useEffect, useState } from 'react'
+import { createCheckoutSession } from '@/app/actions/lemonsqueezy'
+import { Loader2 } from 'lucide-react'
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
+interface CheckoutProps {
+  productId: string
+}
 
-export function Checkout({ productId }: { productId: string }) {
-  const [clientSecret, setClientSecret] = useState<string | null>(null)
+export function Checkout({ productId }: CheckoutProps) {
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    startCheckoutSession(productId).then((secret) => {
-      setClientSecret(secret)
-    })
+    async function initiateCheckout() {
+      try {
+        const { url } = await createCheckoutSession(productId)
+        // Redirect to Lemon Squeezy checkout
+        window.location.href = url
+      } catch (err) {
+        console.error('[v0] Checkout error:', err)
+        setError('Failed to create checkout session. Please try again.')
+        setIsLoading(false)
+      }
+    }
+
+    initiateCheckout()
   }, [productId])
 
-  if (!clientSecret) {
+  if (error) {
     return (
-      <div className="flex items-center justify-center p-12">
-        <div className="text-center">
-          <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4" />
-          <p className="text-muted-foreground">Loading checkout...</p>
-        </div>
+      <div className="flex items-center justify-center p-8">
+        <p className="text-destructive">{error}</p>
       </div>
     )
   }
 
   return (
-    <EmbeddedCheckoutProvider stripe={stripePromise} options={{ clientSecret }}>
-      <EmbeddedCheckout />
-    </EmbeddedCheckoutProvider>
+    <div className="flex items-center justify-center p-8">
+      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <p className="ml-3 text-muted-foreground">Redirecting to checkout...</p>
+    </div>
   )
 }
