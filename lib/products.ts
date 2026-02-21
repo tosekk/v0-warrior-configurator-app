@@ -230,6 +230,11 @@ export const PRODUCTS: Product[] = [
   }
 ]
 
+// Helper to get product by ID
+export function getProductById(id: string) {
+  return PRODUCTS.find(p => p.id === id)
+}
+
 // Helper to get products by race
 export function getProductsByRace(race: 'human' | 'goblin') {
   return PRODUCTS.filter(p => p.race === race)
