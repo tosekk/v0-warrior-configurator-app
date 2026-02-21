@@ -80,11 +80,19 @@ function WarriorModel({
       {config.facialHair !== "none" && modelUrls.facialHair && (
         <FacialHairModel url={modelUrls.facialHair} />
       )}
-    </group>0
+    </group>
   );
 }
 
-function Scene({ baseUrl, config, modelUrls }: { baseUrl: string, config: WarriorConfig, modelUrls: ModelUrls }) {
+function Scene({
+  baseUrl,
+  config,
+  modelUrls,
+}: {
+  baseUrl: string;
+  config: WarriorConfig;
+  modelUrls: ModelUrls;
+}) {
   return (
     <>
       <PerspectiveCamera makeDefault position={[3, 2, 5]} />
@@ -119,13 +127,23 @@ function LoadingOverlay() {
     <div className="absolute inset-0 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm z-10 rounded-lg">
       <div className="flex flex-col items-center gap-3 text-slate-300">
         <Loader2 className="h-8 w-8 animate-spin text-amber-400" />
-        <span className="text-sm font-medium tracking-wide">Loading warrior</span>
+        <span className="text-sm font-medium tracking-wide">
+          Loading warrior
+        </span>
       </div>
     </div>
-  )
+  );
 }
 
-export function WarriorScene({ config, modelUrls, baseModelUrl }: { config: WarriorConfig, modelUrls: ModelUrls, baseModelUrl: string | null }) {
+export function WarriorScene({
+  config,
+  modelUrls,
+  baseModelUrl,
+}: {
+  config: WarriorConfig;
+  modelUrls: ModelUrls;
+  baseModelUrl: string | null;
+}) {
   return (
     <div className="relative w-full h-full">
       {!baseModelUrl && <LoadingOverlay />}

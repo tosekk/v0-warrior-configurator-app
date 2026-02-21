@@ -32,7 +32,7 @@ export const PRODUCTS: Product[] = [
     race: "human",
     slot: "base",
     itemId: "base",
-    storagePath: "human/base.glb"
+    storagePath: "human/base.glb",
   },
   {
     id: "goblin-base",
@@ -43,8 +43,8 @@ export const PRODUCTS: Product[] = [
     race: "goblin",
     slot: "base",
     itemId: "base",
-    storagePath: "goblin/base.glb"
-  }
+    storagePath: "goblin/base.glb",
+  },
   // Human Items - Helmets
   {
     id: "human-helmet-basic",
@@ -298,27 +298,47 @@ export function resolveBaseModelUrl(race: "human" | "goblin"): string | null {
   return product ? getPublicModelUrl(product) : null;
 }
 
-export function resolveModelUrls(race: 'human' | 'goblin', config: { helmet: string, armor: string, weapon: string, facialHair: string }): { helmet: string | null, armor: string | null, weapon: string | null, facialHair: string | null } {
-  function urlForSlot(slot: 'helmet' | 'armor' | 'weapon' | 'facial_hair', itemId: string): string | null {
-    if (itemId === 'none') return null
+export function resolveModelUrls(
+  race: "human" | "goblin",
+  config: { helmet: string; armor: string; weapon: string; facialHair: string },
+): {
+  helmet: string | null;
+  armor: string | null;
+  weapon: string | null;
+  facialHair: string | null;
+} {
+  function urlForSlot(
+    slot: "helmet" | "armor" | "weapon" | "facial_hair",
+    itemId: string,
+  ): string | null {
+    if (itemId === "none") return null;
     const product = PRODUCTS.find(
-      p => p.race === race && p.slot === slot && p.itemId === itemId && p.type === 'item'
-    )
-    return product ? getPublicModelUrl(product) : null
+      (p) =>
+        p.race === race &&
+        p.slot === slot &&
+        p.itemId === itemId &&
+        p.type === "item",
+    );
+    return product ? getPublicModelUrl(product) : null;
   }
 
   return {
-    helmet: urlForSlot('helmet', config.helmet),
-    armor: urlForSlot('armor', config.armor),
-    weapon: urlForSlot('weapon', config.weapon),
-    facialHair: urlForSlot('facial_hair', config.facialHair)
-  }
+    helmet: urlForSlot("helmet", config.helmet),
+    armor: urlForSlot("armor", config.armor),
+    weapon: urlForSlot("weapon", config.weapon),
+    facialHair: urlForSlot("facial_hair", config.facialHair),
+  };
 }
 
-export function getModelUrl(product: Product, supabase: SupabaseClient): string | null {
-  if (!product.storagePath) return null
-  const { data } = supabase.storage.from(BUCKET).getPublicUrl(product.storagePath)
-  return data.publicUrl
+export function getModelUrl(
+  product: Product,
+  supabase: SupabaseClient,
+): string | null {
+  if (!product.storagePath) return null;
+  const { data } = supabase.storage
+    .from(BUCKET)
+    .getPublicUrl(product.storagePath);
+  return data.publicUrl;
 }
 
 // Helper to get product by ID
