@@ -33,19 +33,21 @@ export function RaceConfirmationDialog({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Switch to {raceName}?</AlertDialogTitle>
-          <AlertDialogDescription className="space-y-2">
-            <p>
-              Switching races will reset your current configuration to the default settings for {raceName}.
-            </p>
-            {hasUnsavedChanges && (
-              <p className="text-amber-500 font-medium">
-                Warning: You have unsaved changes that will be lost.
-              </p>
-            )}
-            <p>
-              Your purchased items and saved configurations for each race are preserved separately,
-              so you can switch between races at any time without losing progress.
-            </p>
+          <AlertDialogDescription asChild>
+            <div className="text-muted-foreground text-sm space-y-2">
+              <span className="block">
+                Switching races will reset your current configuration to the default settings for {raceName}.
+              </span>
+              {hasUnsavedChanges && (
+                <span className="block text-amber-500 font-medium">
+                  Warning: You have unsaved changes that will be lost.
+                </span>
+              )}
+              <span className="block">
+                Your purchased items and saved configurations for each race are preserved separately,
+                so you can switch between races at any time without losing progress.
+              </span>
+            </div>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
