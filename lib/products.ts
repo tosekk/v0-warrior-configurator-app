@@ -1,7 +1,19 @@
-"use server";
-
-import { createClient } from "@/lib/supabase/server";
-import { SupabaseClient } from "@supabase/supabase-js";
+// Bucket name for all 3D model assets
+// Expected folder structure in the bucket:
+//   3d-models/
+//     human/
+//       helmet/basic.glb
+//       helmet/knight.glb
+//       armor/leather.glb
+//       armor/plate.glb
+//       weapon/sword.glb
+//       weapon/axe.glb
+//       facial_hair/full.glb
+//       facial_hair/goatee.glb
+//     goblin/
+//       helmet/crude.glb
+//       ...
+const BUCKET = "3d-models";
 
 export interface Product {
   id: string;
@@ -13,16 +25,16 @@ export interface Product {
   slot?: "base" | "helmet" | "armor" | "weapon" | "facial_hair";
   itemId?: string;
   bundleItems?: string[]; // Item IDs included in the bundle
+  // Storage path within the bucket (only set for individual items with a 3D model)
   storagePath?: string;
 }
 
-const BUCKET = "3d-models";
 // All products for the warrior configurator
 // Individual items are $1.99
 // Themed bundles (3 items: helmet + armor + weapon) are $4.99
 // Complete bundles (all 8 items for a race) are $23.99
 export const PRODUCTS: Product[] = [
-  // Base models - one per race, always free, not purchaseable
+  // Base models — one per race, always free, not purchasable
   {
     id: "human-base",
     name: "Human Warrior Base",
@@ -45,6 +57,7 @@ export const PRODUCTS: Product[] = [
     itemId: "base",
     storagePath: "goblin/base.glb",
   },
+
   // Human Items - Helmets
   {
     id: "human-helmet-basic",
@@ -114,7 +127,7 @@ export const PRODUCTS: Product[] = [
     race: "human",
     slot: "weapon",
     itemId: "axe",
-    storagePath: "human/weapon/battle_axe.glb",
+    storagePath: "human/weapon/axe.glb",
   },
 
   // Human Items - Facial Hair
@@ -127,7 +140,7 @@ export const PRODUCTS: Product[] = [
     race: "human",
     slot: "facial_hair",
     itemId: "full",
-    storagePath: "human/facial_hair/full_beard.glb",
+    storagePath: "human/facial_hair/full.glb",
   },
   {
     id: "human-beard-goatee",
@@ -199,7 +212,7 @@ export const PRODUCTS: Product[] = [
     race: "goblin",
     slot: "weapon",
     itemId: "dagger",
-    storagePath: "goblin/weapon/rusty_dagger.glb",
+    storagePath: "goblin/weapon/dagger.glb",
   },
   {
     id: "goblin-weapon-club",
@@ -223,7 +236,7 @@ export const PRODUCTS: Product[] = [
     race: "goblin",
     slot: "facial_hair",
     itemId: "scraggly",
-    storagePath: "goblin/weapon/beard_scraggly.glb",
+    storagePath: "goblin/facial_hair/scraggly.glb",
   },
   {
     id: "goblin-beard-braided",
@@ -234,10 +247,11 @@ export const PRODUCTS: Product[] = [
     race: "goblin",
     slot: "facial_hair",
     itemId: "braided",
-    storagePath: "goblin/weapon/beard_braided.glb",
+    storagePath: "goblin/facial_hair/braided.glb",
   },
 
   // Themed Bundles - $4.99 (1 helmet + 1 armor + 1 weapon)
+  // Bundles have no storagePath — their models are resolved from bundleItems
   {
     id: "human-knight-set",
     name: "Knight Set",
@@ -286,6 +300,25 @@ export const PRODUCTS: Product[] = [
   },
 ];
 
+// ─── Storage Helpers ──────────────────────────────────────────────────────────
+//
+// Two variants are provided:
+//
+// getPublicModelUrl(product)
+//   — Client-safe. Constructs the public URL directly from the env var.
+//     Use this in 'use client' components like page.tsx.
+//     Requires the bucket to be public.
+//
+// getModelUrl(product, supabase)
+//   — Server-only. Uses a cookie-aware server client (from server.ts).
+//     Use this in Server Components or Route Handlers.
+//     Works for both public and private buckets.
+
+/**
+ * Client-safe public URL helper — no Supabase client required.
+ * Builds the URL directly from NEXT_PUBLIC_SUPABASE_URL.
+ * Only works when the bucket is set to public in Supabase Storage.
+ */
 export function getPublicModelUrl(product: Product): string | null {
   if (!product.storagePath) return null;
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -293,11 +326,20 @@ export function getPublicModelUrl(product: Product): string | null {
   return `${supabaseUrl}/storage/v1/object/public/${BUCKET}/${product.storagePath}`;
 }
 
+/**
+ * Resolves the base body model URL for a given race.
+ * Safe to call from 'use client' components.
+ */
 export function resolveBaseModelUrl(race: "human" | "goblin"): string | null {
   const product = PRODUCTS.find((p) => p.race === race && p.slot === "base");
   return product ? getPublicModelUrl(product) : null;
 }
 
+/**
+ * Resolves a full set of model URLs for the current warrior config.
+ * Returns null for any slot set to 'none' or with no matching product.
+ * Safe to call from 'use client' components.
+ */
 export function resolveModelUrls(
   race: "human" | "goblin",
   config: { helmet: string; armor: string; weapon: string; facialHair: string },
@@ -330,45 +372,30 @@ export function resolveModelUrls(
   };
 }
 
-export function getModelUrl(
-  product: Product,
-  supabase: SupabaseClient,
-): string | null {
-  if (!product.storagePath) return null;
-  const { data } = supabase.storage
-    .from(BUCKET)
-    .getPublicUrl(product.storagePath);
-  return data.publicUrl;
-}
+// ─── Product Lookup Helpers ───────────────────────────────────────────────────
 
-// Helper to get product by ID
 export function getProductById(id: string) {
   return PRODUCTS.find((p) => p.id === id);
 }
 
-// Helper to get products by race
 export function getProductsByRace(race: "human" | "goblin") {
   return PRODUCTS.filter((p) => p.race === race);
 }
 
-// Helper to get items by slot
 export function getItemsBySlot(race: "human" | "goblin", slot: string) {
   return PRODUCTS.filter(
     (p) => p.race === race && p.slot === slot && p.type === "item",
   );
 }
 
-// Helper to get themed bundle by race
 export function getThemedBundleByRace(race: "human" | "goblin") {
   return PRODUCTS.find((p) => p.race === race && p.type === "bundle");
 }
 
-// Helper to get complete bundle by race
 export function getCompleteBundleByRace(race: "human" | "goblin") {
   return PRODUCTS.find((p) => p.race === race && p.type === "complete_bundle");
 }
 
-// Helper to get all bundles by race (both themed and complete)
 export function getAllBundlesByRace(race: "human" | "goblin") {
   return PRODUCTS.filter(
     (p) =>
