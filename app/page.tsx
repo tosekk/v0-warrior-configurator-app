@@ -11,6 +11,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { User, LogOut, Save } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import { useToast } from '@/hooks/use-toast'
 
 export default function Home() {
   const [race, setRace] = useState<'human' | 'goblin'>('human')
@@ -26,6 +27,7 @@ export default function Home() {
   const [checkoutDialogOpen, setCheckoutDialogOpen] = useState(false)
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null)
   const router = useRouter()
+  const { toast } = useToast()
 
   useEffect(() => {
     checkUser()
@@ -119,9 +121,16 @@ export default function Home() {
     
     if (error) {
       console.error('[v0] Error saving configuration:', error)
-      alert('Error saving configuration')
+      toast({
+        title: 'Error Saving Configuration',
+        description: 'Failed to save your warrior configuration. Please try again.',
+        variant: 'destructive'
+      })
     } else {
-      alert('Configuration saved!')
+      toast({
+        title: 'Configuration Saved!',
+        description: `Your ${race} warrior configuration has been saved successfully.`,
+      })
     }
   }
 
@@ -130,6 +139,10 @@ export default function Home() {
     await supabase.auth.signOut()
     setUser(null)
     setOwnedItems([])
+    toast({
+      title: 'Signed Out',
+      description: 'You have been successfully signed out.',
+    })
     router.refresh()
   }
 

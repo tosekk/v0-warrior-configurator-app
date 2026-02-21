@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import { useToast } from '@/hooks/use-toast'
 
 interface AuthDialogProps {
   open: boolean
@@ -18,6 +19,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
+  const { toast } = useToast()
 
   async function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -35,7 +37,9 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: process.env.NEXT_PUBLIC_APP_URL 
+          ? `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`
+          : `${window.location.origin}/auth/callback`,
         data: {
           instagram_username: instagramUsername,
         },
@@ -50,7 +54,10 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
     }
 
     // Show success message
-    alert('Check your email to confirm your account!')
+    toast({
+      title: 'Account Created!',
+      description: 'Please check your email to confirm your account before signing in.',
+    })
     onOpenChange(false)
   }
 
@@ -77,6 +84,10 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
       return
     }
 
+    toast({
+      title: 'Welcome Back, Warrior!',
+      description: 'You have been successfully signed in.',
+    })
     onOpenChange(false)
     router.refresh()
   }
