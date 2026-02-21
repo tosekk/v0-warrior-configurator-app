@@ -75,7 +75,23 @@ export default function Home() {
       .eq('user_id', userId)
     
     if (purchasesData) {
-      setOwnedItems(purchasesData.map(p => p.product_id))
+      const purchasedProductIds = purchasesData.map(p => p.product_id)
+      
+      // Check if user owns complete bundle for current race
+      const completeBundleId = race === 'human' ? 'human-complete-bundle' : 'goblin-complete-bundle'
+      const ownsCompleteBundle = purchasedProductIds.includes(completeBundleId)
+      
+      if (ownsCompleteBundle) {
+        // If they own complete bundle, mark all items as owned
+        import('@/lib/products').then(({ getProductsByRace }) => {
+          const allRaceItems = getProductsByRace(race)
+            .filter(p => p.type === 'item')
+            .map(p => p.id)
+          setOwnedItems([...purchasedProductIds, ...allRaceItems])
+        })
+      } else {
+        setOwnedItems(purchasedProductIds)
+      }
     }
   }
 
@@ -131,13 +147,24 @@ export default function Home() {
     setCheckoutDialogOpen(true)
   }
 
-  function handlePurchaseBundle() {
+  function handlePurchaseThemedBundle() {
     if (!user) {
       setAuthDialogOpen(true)
       return
     }
     
-    const bundleId = race === 'human' ? 'human-bundle' : 'goblin-bundle'
+    const bundleId = race === 'human' ? 'human-knight-set' : 'goblin-raider-set'
+    setSelectedProductId(bundleId)
+    setCheckoutDialogOpen(true)
+  }
+
+  function handlePurchaseCompleteBundle() {
+    if (!user) {
+      setAuthDialogOpen(true)
+      return
+    }
+    
+    const bundleId = race === 'human' ? 'human-complete-bundle' : 'goblin-complete-bundle'
     setSelectedProductId(bundleId)
     setCheckoutDialogOpen(true)
   }
@@ -225,7 +252,8 @@ export default function Home() {
               ownedItems={ownedItems}
               onConfigChange={handleConfigChange}
               onPurchase={handlePurchase}
-              onPurchaseBundle={handlePurchaseBundle}
+              onPurchaseThemedBundle={handlePurchaseThemedBundle}
+              onPurchaseCompleteBundle={handlePurchaseCompleteBundle}
             />
           </Card>
         </div>

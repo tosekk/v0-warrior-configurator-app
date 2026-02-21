@@ -39,6 +39,7 @@ export async function startCheckoutSession(productId: string) {
       race: product.race || '',
       slot: product.slot || '',
       itemId: product.itemId || '',
+      bundleItems: product.bundleItems ? JSON.stringify(product.bundleItems) : '',
     },
   })
 

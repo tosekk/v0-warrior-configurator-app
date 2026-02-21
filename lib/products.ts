@@ -3,14 +3,17 @@ export interface Product {
   name: string
   description: string
   priceInCents: number
-  type: 'item' | 'bundle'
+  type: 'item' | 'bundle' | 'complete_bundle'
   race?: 'human' | 'goblin'
   slot?: 'helmet' | 'armor' | 'weapon' | 'facial_hair'
   itemId?: string
+  bundleItems?: string[] // Item IDs included in the bundle
 }
 
 // All products for the warrior configurator
-// Individual items are $1.99, bundles are $4.99
+// Individual items are $1.99
+// Themed bundles (3 items: helmet + armor + weapon) are $4.99
+// Complete bundles (all 8 items for a race) are $23.99
 export const PRODUCTS: Product[] = [
   // Human Items - Helmets
   {
@@ -188,21 +191,41 @@ export const PRODUCTS: Product[] = [
     itemId: 'braided'
   },
   
-  // Bundles
+  // Themed Bundles - $4.99 (1 helmet + 1 armor + 1 weapon)
   {
-    id: 'human-bundle',
-    name: 'Human Warrior Complete Bundle',
-    description: 'Unlock all customization options for human warriors',
+    id: 'human-knight-set',
+    name: 'Knight Set',
+    description: 'Complete knight outfit: Knight Helmet + Plate Armor + Battle Axe',
     priceInCents: 499,
     type: 'bundle',
+    race: 'human',
+    bundleItems: ['human-helmet-knight', 'human-armor-plate', 'human-weapon-axe']
+  },
+  {
+    id: 'goblin-raider-set',
+    name: 'Raider Set',
+    description: 'Complete raider outfit: Spiked Helmet + Tribal Armor + Spiked Club',
+    priceInCents: 499,
+    type: 'bundle',
+    race: 'goblin',
+    bundleItems: ['goblin-helmet-spiked', 'goblin-armor-tribal', 'goblin-weapon-club']
+  },
+  
+  // Complete Bundles - $23.99 (unlock everything for a race)
+  {
+    id: 'human-complete-bundle',
+    name: 'Human Warrior Complete Bundle',
+    description: 'Unlock all customization options for human warriors',
+    priceInCents: 2399,
+    type: 'complete_bundle',
     race: 'human'
   },
   {
-    id: 'goblin-bundle',
+    id: 'goblin-complete-bundle',
     name: 'Goblin Warrior Complete Bundle',
     description: 'Unlock all customization options for goblin warriors',
-    priceInCents: 499,
-    type: 'bundle',
+    priceInCents: 2399,
+    type: 'complete_bundle',
     race: 'goblin'
   }
 ]
@@ -217,7 +240,17 @@ export function getItemsBySlot(race: 'human' | 'goblin', slot: string) {
   return PRODUCTS.filter(p => p.race === race && p.slot === slot && p.type === 'item')
 }
 
-// Helper to get bundle by race
-export function getBundleByRace(race: 'human' | 'goblin') {
+// Helper to get themed bundle by race
+export function getThemedBundleByRace(race: 'human' | 'goblin') {
   return PRODUCTS.find(p => p.race === race && p.type === 'bundle')
+}
+
+// Helper to get complete bundle by race
+export function getCompleteBundleByRace(race: 'human' | 'goblin') {
+  return PRODUCTS.find(p => p.race === race && p.type === 'complete_bundle')
+}
+
+// Helper to get all bundles by race (both themed and complete)
+export function getAllBundlesByRace(race: 'human' | 'goblin') {
+  return PRODUCTS.filter(p => p.race === race && (p.type === 'bundle' || p.type === 'complete_bundle'))
 }

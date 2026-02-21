@@ -67,22 +67,49 @@ export async function POST(req: Request) {
       })
     }
 
-    // Record the purchase
-    const { error: purchaseError } = await supabase
-      .from('user_purchases')
-      .insert({
+    // Handle bundle purchases - record all items in the bundle
+    const productType = metadata.productType
+    const bundleItems = metadata.bundleItems ? JSON.parse(metadata.bundleItems) : null
+    
+    let purchasesToInsert = []
+    
+    if (productType === 'bundle' && bundleItems && Array.isArray(bundleItems)) {
+      // Themed bundle - record each item separately
+      purchasesToInsert = bundleItems.map(itemId => ({
+        user_id: userData.id,
+        product_id: itemId,
+        stripe_session_id: session.id,
+        amount_paid: 0, // Individual items in bundle don't have separate prices
+      }))
+    } else if (productType === 'complete_bundle') {
+      // Complete bundle - record the bundle itself (gives access to all items)
+      purchasesToInsert = [{
         user_id: userData.id,
         product_id: metadata.productId,
         stripe_session_id: session.id,
         amount_paid: session.amount_total || 0,
-      })
+      }]
+    } else {
+      // Individual item purchase
+      purchasesToInsert = [{
+        user_id: userData.id,
+        product_id: metadata.productId,
+        stripe_session_id: session.id,
+        amount_paid: session.amount_total || 0,
+      }]
+    }
+
+    // Record the purchase(s)
+    const { error: purchaseError } = await supabase
+      .from('user_purchases')
+      .insert(purchasesToInsert)
 
     if (purchaseError) {
       console.error('[v0] Error recording purchase:', purchaseError)
       return NextResponse.json({ error: 'Error recording purchase' }, { status: 500 })
     }
 
-    console.log('[v0] Purchase recorded successfully')
+    console.log('[v0] Purchase recorded successfully:', purchasesToInsert.length, 'item(s)')
   }
 
   return NextResponse.json({ received: true })

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Lock, ShoppingCart } from 'lucide-react'
-import { getItemsBySlot, getBundleByRace } from '@/lib/products'
+import { getItemsBySlot, getThemedBundleByRace, getCompleteBundleByRace } from '@/lib/products'
 import { useState } from 'react'
 
 interface CustomizationPanelProps {
@@ -19,7 +19,8 @@ interface CustomizationPanelProps {
   ownedItems: string[]
   onConfigChange: (slot: string, value: string) => void
   onPurchase: (productId: string) => void
-  onPurchaseBundle: () => void
+  onPurchaseThemedBundle: () => void
+  onPurchaseCompleteBundle: () => void
 }
 
 const FREE_ITEMS = {
@@ -42,11 +43,13 @@ export function CustomizationPanel({
   ownedItems,
   onConfigChange,
   onPurchase,
-  onPurchaseBundle
+  onPurchaseThemedBundle,
+  onPurchaseCompleteBundle
 }: CustomizationPanelProps) {
   const [activeSlot, setActiveSlot] = useState<string>('helmet')
   
-  const bundle = getBundleByRace(race)
+  const themedBundle = getThemedBundleByRace(race)
+  const completeBundle = getCompleteBundleByRace(race)
   
   function renderSlotItems(slot: string) {
     const items = getItemsBySlot(race, slot)
@@ -133,18 +136,35 @@ export function CustomizationPanel({
   return (
     <div className="h-full flex flex-col">
       {/* Bundle Purchase Section */}
-      <div className="p-4 border-b bg-muted/30">
-        <Card className="p-4 bg-gradient-to-br from-primary/20 to-primary/5 border-primary/50">
-          <div className="flex items-start justify-between">
-            <div>
-              <h3 className="font-bold text-lg">Complete Bundle</h3>
-              <p className="text-sm text-muted-foreground mt-1">
-                Unlock all {race} warrior customization options
+      <div className="p-4 border-b bg-muted/30 space-y-3">
+        {/* Themed Bundle */}
+        <Card className="p-4 bg-gradient-to-br from-accent/20 to-accent/5 border-accent/50">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1">
+              <h3 className="font-bold">{themedBundle?.name}</h3>
+              <p className="text-xs text-muted-foreground mt-1">
+                {themedBundle?.description}
               </p>
             </div>
-            <Button onClick={onPurchaseBundle} size="lg">
+            <Button onClick={onPurchaseThemedBundle} size="sm">
+              <ShoppingCart className="h-3 w-3 mr-1" />
+              ${themedBundle ? (themedBundle.priceInCents / 100).toFixed(2) : '4.99'}
+            </Button>
+          </div>
+        </Card>
+        
+        {/* Complete Bundle */}
+        <Card className="p-4 bg-gradient-to-br from-primary/20 to-primary/5 border-primary/50">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1">
+              <h3 className="font-bold text-lg">{completeBundle?.name}</h3>
+              <p className="text-sm text-muted-foreground mt-1">
+                {completeBundle?.description}
+              </p>
+            </div>
+            <Button onClick={onPurchaseCompleteBundle} size="lg">
               <ShoppingCart className="h-4 w-4 mr-2" />
-              ${bundle ? (bundle.priceInCents / 100).toFixed(2) : '4.99'}
+              ${completeBundle ? (completeBundle.priceInCents / 100).toFixed(2) : '23.99'}
             </Button>
           </div>
         </Card>
