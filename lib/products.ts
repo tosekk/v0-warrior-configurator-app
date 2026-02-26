@@ -4,8 +4,8 @@
 //     human/
 //       helmet/basic.glb
 //       helmet/knight.glb
-//       armor/leather.glb
-//       armor/plate.glb
+//       chestplate/leather.glb
+//       chestplate/plate.glb
 //       weapon/sword.glb
 //       weapon/axe.glb
 //       facial_hair/full.glb
@@ -22,7 +22,15 @@ export interface Product {
   priceInCents: number;
   type: "item" | "bundle" | "complete_bundle";
   race?: "human" | "goblin";
-  slot?: "base" | "helmet" | "armor" | "weapon" | "facial_hair";
+  slot?:
+    | "base"
+    | "helmet"
+    | "chestplate"
+    | "pants"
+    | "shoes"
+    | "weapon"
+    | "facial_hair"
+    | "mount";
   itemId?: string;
   bundleItems?: string[]; // Item IDs included in the bundle
   // Storage path within the bucket (only set for individual items with a 3D model)
@@ -31,7 +39,7 @@ export interface Product {
 
 // All products for the warrior configurator
 // Individual items are $1.99
-// Themed bundles (3 items: helmet + armor + weapon) are $4.99
+// Themed bundles (3 items: helmet + chestplate + weapon) are $4.99
 // Complete bundles (all 8 items for a race) are $23.99
 export const PRODUCTS: Product[] = [
   // Base models — one per race, always free, not purchasable
@@ -60,50 +68,98 @@ export const PRODUCTS: Product[] = [
 
   // Human Items - Helmets
   {
-    id: "human-helmet-basic",
-    name: "Human Basic Helmet",
-    description: "A simple iron helmet for human warriors",
-    priceInCents: 199,
+    id: "human-archer-hood",
+    name: "Human Archer Hood",
+    description: "A simple hood for human archers",
+    priceInCents: 0,
     type: "item",
     race: "human",
     slot: "helmet",
-    itemId: "basic",
-    storagePath: "human/helmet/basic.glb",
+    itemId: "archer_hood",
+    storagePath: "human/helmet/free/archer_hood.glb",
   },
   {
-    id: "human-helmet-knight",
-    name: "Human Knight Helmet",
-    description: "A noble knight's helmet with plume",
-    priceInCents: 199,
+    id: "human-squire-helmet",
+    name: "Human Squire Helmet",
+    description: "A knight's squire's helmet",
+    priceInCents: 0,
     type: "item",
     race: "human",
     slot: "helmet",
-    itemId: "knight",
-    storagePath: "human/helmet/knight.glb",
+    itemId: "squire_helmet",
+    storagePath: "human/helmet/free/squire_helmet.glb",
   },
 
-  // Human Items - Armor
+  // Human Items - chestplate
   {
-    id: "human-armor-leather",
-    name: "Human Leather Armor",
-    description: "Lightweight leather armor for agility",
-    priceInCents: 199,
+    id: "human-archer-tunic",
+    name: "Human Archer Tunic",
+    description: "Lightweight leather and cloth chestplate for archers",
+    priceInCents: 0,
     type: "item",
     race: "human",
-    slot: "armor",
-    itemId: "leather",
-    storagePath: "human/armor/leather.glb",
+    slot: "chestplate",
+    itemId: "archer_tunic",
+    storagePath: "human/chestplate/free/archer_tunic.glb",
   },
   {
-    id: "human-armor-plate",
-    name: "Human Plate Armor",
-    description: "Heavy plate armor for maximum protection",
-    priceInCents: 199,
+    id: "human-squire-vest",
+    name: "Human Squire Vest",
+    description: "Simple leather vest with metal pauldrons",
+    priceInCents: 0,
     type: "item",
     race: "human",
-    slot: "armor",
-    itemId: "plate",
-    storagePath: "human/armor/plate.glb",
+    slot: "chestplate",
+    itemId: "squire_vest",
+    storagePath: "human/chestplate/free/squire_vest.glb",
+  },
+
+  // Human Items = pants
+  {
+    id: "human-archer-pants",
+    name: "Human Archer Tunic",
+    description: "Lightweight leather and cloth chestplate for archers",
+    priceInCents: 0,
+    type: "item",
+    race: "human",
+    slot: "chestplate",
+    itemId: "archer_tunic",
+    storagePath: "human/pants/free/archer_pants.glb",
+  },
+  {
+    id: "human-squire-pants",
+    name: "Human Squire Vest",
+    description: "Simple leather vest with metal pauldrons",
+    priceInCents: 0,
+    type: "item",
+    race: "human",
+    slot: "chestplate",
+    itemId: "squire_vest",
+    storagePath: "human/pants/free/squire_pants.glb",
+  },
+
+  // Human Items - shoes
+  {
+    id: "human-archer-boots",
+    name: "Human Archer Tunic",
+    description: "Lightweight leather and cloth chestplate for archers",
+    priceInCents: 0,
+    type: "item",
+    race: "human",
+    slot: "chestplate",
+    itemId: "archer_tunic",
+    storagePath: "human/shoes/free/archer_boots.glb",
+  },
+  {
+    id: "human-quire-vest",
+    name: "Human Squire Vest",
+    description: "Simple leather vest with metal pauldrons",
+    priceInCents: 0,
+    type: "item",
+    race: "human",
+    slot: "chestplate",
+    itemId: "squire_vest",
+    storagePath: "human/shoes/free/squire_boots.glb",
   },
 
   // Human Items - Weapons
@@ -116,7 +172,7 @@ export const PRODUCTS: Product[] = [
     race: "human",
     slot: "weapon",
     itemId: "sword",
-    storagePath: "human/weapon/sword.glb",
+    storagePath: "human/weapon/free/sword.glb",
   },
   {
     id: "human-weapon-axe",
@@ -127,7 +183,7 @@ export const PRODUCTS: Product[] = [
     race: "human",
     slot: "weapon",
     itemId: "axe",
-    storagePath: "human/weapon/axe.glb",
+    storagePath: "human/weapon/free/axe.glb",
   },
 
   // Human Items - Facial Hair
@@ -140,7 +196,7 @@ export const PRODUCTS: Product[] = [
     race: "human",
     slot: "facial_hair",
     itemId: "full",
-    storagePath: "human/facial_hair/full.glb",
+    storagePath: "human/facial_hair/free/full.glb",
   },
   {
     id: "human-beard-goatee",
@@ -151,7 +207,7 @@ export const PRODUCTS: Product[] = [
     race: "human",
     slot: "facial_hair",
     itemId: "goatee",
-    storagePath: "human/facial_hair/goatee.glb",
+    storagePath: "human/facial_hair/free/goatee.glb",
   },
 
   // Goblin Items - Helmets
@@ -164,7 +220,7 @@ export const PRODUCTS: Product[] = [
     race: "goblin",
     slot: "helmet",
     itemId: "crude",
-    storagePath: "goblin/helmet/crude.glb",
+    storagePath: "goblin/helmet/free/crude.glb",
   },
   {
     id: "goblin-helmet-spiked",
@@ -175,31 +231,31 @@ export const PRODUCTS: Product[] = [
     race: "goblin",
     slot: "helmet",
     itemId: "spiked",
-    storagePath: "goblin/helmet/spiked.glb",
+    storagePath: "goblin/helmet/free/spiked.glb",
   },
 
-  // Goblin Items - Armor
+  // Goblin Items - chestplate
   {
-    id: "goblin-armor-scrap",
-    name: "Goblin Scrap Armor",
-    description: "Armor made from scavenged materials",
+    id: "goblin-chestplate-scrap",
+    name: "Goblin Scrap chestplate",
+    description: "chestplate made from scavenged materials",
     priceInCents: 199,
     type: "item",
     race: "goblin",
-    slot: "armor",
+    slot: "chestplate",
     itemId: "scrap",
-    storagePath: "goblin/armor/scrap.glb",
+    storagePath: "goblin/chestplate/free/scrap.glb",
   },
   {
-    id: "goblin-armor-tribal",
-    name: "Goblin Tribal Armor",
-    description: "Traditional goblin tribal armor",
+    id: "goblin-chestplate-tribal",
+    name: "Goblin Tribal chestplate",
+    description: "Traditional goblin tribal chestplate",
     priceInCents: 199,
     type: "item",
     race: "goblin",
-    slot: "armor",
+    slot: "chestplate",
     itemId: "tribal",
-    storagePath: "goblin/armor/tribal.glb",
+    storagePath: "goblin/chestplate/free/tribal.glb",
   },
 
   // Goblin Items - Weapons
@@ -212,7 +268,7 @@ export const PRODUCTS: Product[] = [
     race: "goblin",
     slot: "weapon",
     itemId: "dagger",
-    storagePath: "goblin/weapon/dagger.glb",
+    storagePath: "goblin/weapon/free/dagger.glb",
   },
   {
     id: "goblin-weapon-club",
@@ -223,7 +279,7 @@ export const PRODUCTS: Product[] = [
     race: "goblin",
     slot: "weapon",
     itemId: "club",
-    storagePath: "goblin/weapon/club.glb",
+    storagePath: "goblin/weapon/free/club.glb",
   },
 
   // Goblin Items - Facial Hair
@@ -236,7 +292,7 @@ export const PRODUCTS: Product[] = [
     race: "goblin",
     slot: "facial_hair",
     itemId: "scraggly",
-    storagePath: "goblin/facial_hair/scraggly.glb",
+    storagePath: "goblin/facial_hair/free/scraggly.glb",
   },
   {
     id: "goblin-beard-braided",
@@ -247,22 +303,22 @@ export const PRODUCTS: Product[] = [
     race: "goblin",
     slot: "facial_hair",
     itemId: "braided",
-    storagePath: "goblin/facial_hair/braided.glb",
+    storagePath: "goblin/facial_hair/free/braided.glb",
   },
 
-  // Themed Bundles - $4.99 (1 helmet + 1 armor + 1 weapon)
+  // Themed Bundles - $4.99 (1 helmet + 1 chestplate + 1 weapon)
   // Bundles have no storagePath — their models are resolved from bundleItems
   {
     id: "human-knight-set",
     name: "Knight Set",
     description:
-      "Complete knight outfit: Knight Helmet + Plate Armor + Battle Axe",
+      "Complete knight outfit: Knight Helmet + Plate chestplate + Battle Axe",
     priceInCents: 499,
     type: "bundle",
     race: "human",
     bundleItems: [
       "human-helmet-knight",
-      "human-armor-plate",
+      "human-chestplate-plate",
       "human-weapon-axe",
     ],
   },
@@ -270,13 +326,13 @@ export const PRODUCTS: Product[] = [
     id: "goblin-raider-set",
     name: "Raider Set",
     description:
-      "Complete raider outfit: Spiked Helmet + Tribal Armor + Spiked Club",
+      "Complete raider outfit: Spiked Helmet + Tribal chestplate + Spiked Club",
     priceInCents: 499,
     type: "bundle",
     race: "goblin",
     bundleItems: [
       "goblin-helmet-spiked",
-      "goblin-armor-tribal",
+      "goblin-chestplate-tribal",
       "goblin-weapon-club",
     ],
   },
@@ -342,15 +398,33 @@ export function resolveBaseModelUrl(race: "human" | "goblin"): string | null {
  */
 export function resolveModelUrls(
   race: "human" | "goblin",
-  config: { helmet: string; armor: string; weapon: string; facialHair: string },
+  config: {
+    helmet: string;
+    chestplate: string;
+    pants: string;
+    shoes: string;
+    weapon: string;
+    facialHair: string;
+    mount: string;
+  },
 ): {
   helmet: string | null;
-  armor: string | null;
+  chestplate: string | null;
+  pants: string | null;
+  shoes: string | null;
   weapon: string | null;
   facialHair: string | null;
+  mount: string | null;
 } {
   function urlForSlot(
-    slot: "helmet" | "armor" | "weapon" | "facial_hair",
+    slot:
+      | "helmet"
+      | "chestplate"
+      | "pants"
+      | "shoes"
+      | "weapon"
+      | "facial_hair"
+      | "mount",
     itemId: string,
   ): string | null {
     if (itemId === "none") return null;
@@ -366,9 +440,12 @@ export function resolveModelUrls(
 
   return {
     helmet: urlForSlot("helmet", config.helmet),
-    armor: urlForSlot("armor", config.armor),
+    chestplate: urlForSlot("chestplate", config.chestplate),
+    pants: urlForSlot("pants", config.pants),
+    shoes: urlForSlot("shoes", config.shoes),
     weapon: urlForSlot("weapon", config.weapon),
     facialHair: urlForSlot("facial_hair", config.facialHair),
+    mount: urlForSlot("mount", config.mount),
   };
 }
 

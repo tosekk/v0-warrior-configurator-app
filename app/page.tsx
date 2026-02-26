@@ -26,9 +26,12 @@ export default function Home() {
   const [race, setRace] = useState<"human" | "goblin">("human");
   const [config, setConfig] = useState({
     helmet: "none",
-    armor: "none",
+    chestplate: "none",
+    pants: "none",
+    shoes: "none",
     weapon: "none",
     facialHair: "none",
+    mount: "none",
   });
   const [user, setUser] = useState<any>(null);
   const [ownedItems, setOwnedItems] = useState<string[]>([]);
@@ -89,9 +92,12 @@ export default function Home() {
       const savedRace = configData.race as "human" | "goblin";
       const loadedConfig = {
         helmet: configData.helmet || "none",
-        armor: configData.armor || "none",
+        chesplate: configData.chesplate || "none",
+        pants: configData.pants || "none",
+        shoes: configData.shoes || "none",
         weapon: configData.weapon || "none",
         facialHair: configData.facial_hair || "none",
+        mount: configData.mount || "none",
       };
 
       console.log(
@@ -233,9 +239,12 @@ export default function Home() {
     const result = await saveConfiguration(user.id, {
       race,
       helmet: config.helmet,
-      armor: config.armor,
+      chestplate: config.chestplate,
+      pants: config.pants,
+      shoes: config.shoes,
       weapon: config.weapon,
       facial_hair: config.facialHair,
+      mount: config.mount,
     });
 
     if (!result.success) {
@@ -346,9 +355,12 @@ export default function Home() {
     // Reset config to default when changing race
     const defaultConfig = {
       helmet: "none",
-      armor: "none",
+      chestplate: "none",
+      pants: "none",
+      shoes: "none",
       weapon: "none",
       facialHair: "none",
+      mount: "none",
     };
     setConfig(defaultConfig);
 

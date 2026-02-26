@@ -12,16 +12,22 @@ import { Suspense } from "react";
 interface WarriorConfig {
   race: "human" | "goblin";
   helmet: string;
-  armor: string;
+  chestplate: string;
+  pants: string;
+  shoes: string;
   weapon: string;
   facialHair: string;
+  mount: string;
 }
 
 interface ModelUrls {
   helmet: string | null;
-  armor: string | null;
+  chestplate: string | null;
+  pants: string | null;
+  shoes: string | null;
   weapon: string | null;
   facialHair: string | null;
+  mount: string | null;
 }
 
 // ----- Base Model ----------------------------------------------------------------------------
@@ -71,14 +77,23 @@ function WarriorModel({
       {config.helmet !== "none" && modelUrls.helmet && (
         <HelmetModel url={modelUrls.helmet} />
       )}
-      {config.armor !== "none" && modelUrls.armor && (
-        <ArmorModel url={modelUrls.armor} />
+      {config.chestplate !== "none" && modelUrls.chestplate && (
+        <ArmorModel url={modelUrls.chestplate} />
+      )}
+      {config.pants !== "none" && modelUrls.pants && (
+        <ArmorModel url={modelUrls.pants} />
+      )}
+      {config.shoes !== "none" && modelUrls.shoes && (
+        <ArmorModel url={modelUrls.shoes} />
       )}
       {config.weapon !== "none" && modelUrls.weapon && (
         <WeaponModel url={modelUrls.weapon} />
       )}
       {config.facialHair !== "none" && modelUrls.facialHair && (
         <FacialHairModel url={modelUrls.facialHair} />
+      )}
+      {config.mount !== "none" && modelUrls.mount && (
+        <ArmorModel url={modelUrls.mount} />
       )}
     </group>
   );
