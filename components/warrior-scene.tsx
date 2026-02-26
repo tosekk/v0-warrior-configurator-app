@@ -113,8 +113,8 @@ function Scene({
       <PerspectiveCamera makeDefault position={[3, 2, 5]} />
       <OrbitControls
         enablePan={false}
-        minDistance={3}
-        maxDistance={10}
+        minDistance={2}
+        maxDistance={6}
         minPolarAngle={Math.PI / 4}
         maxPolarAngle={Math.PI / 2}
       />
