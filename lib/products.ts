@@ -117,7 +117,7 @@ export const PRODUCTS: Product[] = [
   // Human Items = pants
   {
     id: "human-archer-pants",
-    name: "Human Archer Tunic",
+    name: "Human Archer Pants",
     description: "Simple pants",
     priceInCents: 0,
     type: "item",
@@ -128,7 +128,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "human-squire-pants",
-    name: "Human Squire Vest",
+    name: "Human Squire Pants",
     description: "Simple pants with some reinforcement",
     priceInCents: 0,
     type: "item",
@@ -141,7 +141,7 @@ export const PRODUCTS: Product[] = [
   // Human Items - shoes
   {
     id: "human-archer-boots",
-    name: "Human Archer Tunic",
+    name: "Human Archer Boots",
     description: "Simple leather boots",
     priceInCents: 0,
     type: "item",
@@ -152,7 +152,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "human-quire-vest",
-    name: "Human Squire Vest",
+    name: "Human Squire Boots",
     description: "Simple leather boots with some reinforcement",
     priceInCents: 0,
     type: "item",
