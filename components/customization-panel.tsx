@@ -17,10 +17,11 @@ interface CustomizationPanelProps {
   config: {
     helmet: string;
     chestplate: string;
-    weapon: string;
-    facialHair: string;
     pants: string;
     shoes: string;
+    weapon: string;
+    shield: string;
+    facialHair: string;
     mount: string;
   };
   ownedItems: string[];
@@ -32,21 +33,13 @@ interface CustomizationPanelProps {
 
 const FREE_ITEMS = {
   helmet: ["none", "archer_hood", "squire_helmet"],
-  chestplate: ["none", "archer_tunic", "squire_vest"],
+  chestplate: ["none", "archer_chestplate", "squire_chestplate"],
   pants: ["none", "archer_pants", "squire_pants"],
-  shoes: ["none", "archer_boots", "squire_boots"],
-  mount: ["none"],
-  weapon: [
-    "none",
-    "bat",
-    "spiky_bat",
-    "mace",
-    "sword01",
-    "sword02",
-    "staff",
-    "bow",
-  ],
+  shoes: ["none", "archer_shoes", "squire_shoes"],
+  weapon: ["none", "archer_bow", "squire_sword"],
+  shield: ["none", "squire_shield"],
   facial_hair: ["none", "full"],
+  mount: ["none"],
 };
 
 const SLOT_LABELS = {
@@ -56,6 +49,7 @@ const SLOT_LABELS = {
   pants: "Pants",
   shoes: "Shoes",
   weapon: "Weapons",
+  shield: "Shields",
   mount: "Mounts",
 };
 

@@ -9,6 +9,7 @@ export interface ConfigurationData {
   pants: string;
   shoes: string;
   weapon: string;
+  shield: string;
   facial_hair: string;
   mount: string;
 }
@@ -76,6 +77,7 @@ export async function saveConfiguration(
         pants: configData.pants,
         shoes: configData.shoes,
         weapon: configData.weapon,
+        shield: configData.shield,
         facial_hair: configData.facial_hair,
         updated_at: new Date().toISOString(),
         mount: configData.mount,
@@ -98,6 +100,7 @@ export async function saveConfiguration(
         pants: configData.pants,
         shoes: configData.shoes,
         weapon: configData.weapon,
+        shield: configData.shield,
         facial_hair: configData.facial_hair,
         mount: configData.mount,
       })

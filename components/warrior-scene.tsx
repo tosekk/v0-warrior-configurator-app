@@ -16,6 +16,7 @@ interface WarriorConfig {
   pants: string;
   shoes: string;
   weapon: string;
+  shield: string;
   facialHair: string;
   mount: string;
 }
@@ -26,6 +27,7 @@ interface ModelUrls {
   pants: string | null;
   shoes: string | null;
   weapon: string | null;
+  shield: string | null;
   facialHair: string | null;
   mount: string | null;
 }
@@ -54,7 +56,17 @@ function WeaponModel({ url }: { url: string }) {
   return <primitive object={scene.clone()} position={[0, 0, 0]} />;
 }
 
+function ShieldModel({ url }: { url: string }) {
+  const { scene } = useGLTF(url);
+  return <primitive object={scene.clone()} position={[0, 0, 0]} />;
+}
+
 function FacialHairModel({ url }: { url: string }) {
+  const { scene } = useGLTF(url);
+  return <primitive object={scene.clone()} position={[0, 0, 0]} />;
+}
+
+function MountModel({ url }: { url: string }) {
   const { scene } = useGLTF(url);
   return <primitive object={scene.clone()} position={[0, 0, 0]} />;
 }
@@ -89,11 +101,14 @@ function WarriorModel({
       {config.weapon !== "none" && modelUrls.weapon && (
         <WeaponModel url={modelUrls.weapon} />
       )}
+      {config.shield !== "none" && modelUrls.shield && (
+        <ShieldModel url={modelUrls.shield} />
+      )}
       {config.facialHair !== "none" && modelUrls.facialHair && (
         <FacialHairModel url={modelUrls.facialHair} />
       )}
       {config.mount !== "none" && modelUrls.mount && (
-        <ArmorModel url={modelUrls.mount} />
+        <MountModel url={modelUrls.mount} />
       )}
     </group>
   );
@@ -129,7 +144,7 @@ function Scene({
       </Suspense>
 
       {/* Ground plane */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1, 0]} receiveShadow>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
         <planeGeometry args={[20, 20]} />
         <meshStandardMaterial color="#2a2a2a" />
       </mesh>

@@ -30,6 +30,7 @@ export default function Home() {
     pants: "none",
     shoes: "none",
     weapon: "none",
+    shield: "none",
     facialHair: "none",
     mount: "none",
   });
@@ -96,6 +97,7 @@ export default function Home() {
         pants: configData.pants || "none",
         shoes: configData.shoes || "none",
         weapon: configData.weapon || "none",
+        shield: configData.shield || "none",
         facialHair: configData.facial_hair || "none",
         mount: configData.mount || "none",
       };
@@ -243,6 +245,7 @@ export default function Home() {
       pants: config.pants,
       shoes: config.shoes,
       weapon: config.weapon,
+      shield: config.shield,
       facial_hair: config.facialHair,
       mount: config.mount,
     });
@@ -359,6 +362,7 @@ export default function Home() {
       pants: "none",
       shoes: "none",
       weapon: "none",
+      shield: "none",
       facialHair: "none",
       mount: "none",
     };

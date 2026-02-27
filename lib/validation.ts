@@ -16,6 +16,7 @@ export function validateRaceConfiguration(
     pants: string;
     shoes: string;
     weapon: string;
+    shield: string;
     facialHair: string;
     mount: string;
   },
@@ -23,7 +24,16 @@ export function validateRaceConfiguration(
   const errors: string[] = [];
 
   // Check each slot
-  const slots = ["helmet", "chestplate", "weapon", "facial_hair"] as const;
+  const slots = [
+    "helmet",
+    "chestplate",
+    "pants",
+    "shoes",
+    "weapon",
+    "shield",
+    "facial_hair",
+    "mount",
+  ] as const;
 
   for (const slot of slots) {
     const configKey = slot === "facial_hair" ? "facialHair" : slot;
@@ -59,6 +69,7 @@ export function validateItemOwnership(
     pants: string;
     shoes: string;
     weapon: string;
+    shield: string;
     facialHair: string;
     mount: string;
   },
@@ -69,10 +80,11 @@ export function validateItemOwnership(
   // Free items per slot
   const freeItems = {
     helmet: ["none", "archer_hood", "squire_helmet"],
-    chestplate: ["none", "archer_tunic", "squire_vest"],
+    chestplate: ["none", "archer_chestplate", "squire_chestplate"],
     pants: ["none", "archer_pants", "squire_pants"],
-    shoes: ["none", "archer_boots", "squrie_boots"],
-    weapon: ["none", "sword"],
+    shoes: ["none", "archer_shoes", "squrie_shoes"],
+    weapon: ["none", "archer_bow", "squire_sword"],
+    shield: ["none", "squire_shield"],
     facial_hair: ["none", "full"],
     mount: ["none"],
   };
@@ -83,6 +95,7 @@ export function validateItemOwnership(
     "pants",
     "shoes",
     "weapon",
+    "shield",
     "facial_hair",
     "mount",
   ] as const;

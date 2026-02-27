@@ -29,6 +29,7 @@ export interface Product {
     | "pants"
     | "shoes"
     | "weapon"
+    | "shield"
     | "facial_hair"
     | "mount";
   itemId?: string;
@@ -66,7 +67,7 @@ export const PRODUCTS: Product[] = [
     storagePath: "goblin/base.glb",
   },
 
-  // Human Items - Helmets
+  // Human Items - Archer Set
   {
     id: "human-archer-hood",
     name: "Human Archer Hood",
@@ -76,21 +77,8 @@ export const PRODUCTS: Product[] = [
     race: "human",
     slot: "helmet",
     itemId: "archer_hood",
-    storagePath: "human/helmet/free/archer_hood.glb",
+    storagePath: "human/free/archer/archer_hood.glb",
   },
-  {
-    id: "human-squire-helmet",
-    name: "Human Squire Helmet",
-    description: "A knight's squire's helmet",
-    priceInCents: 0,
-    type: "item",
-    race: "human",
-    slot: "helmet",
-    itemId: "squire_helmet",
-    storagePath: "human/helmet/free/squire_helmet.glb",
-  },
-
-  // Human Items - chestplate
   {
     id: "human-archer-tunic",
     name: "Human Archer Tunic",
@@ -99,22 +87,9 @@ export const PRODUCTS: Product[] = [
     type: "item",
     race: "human",
     slot: "chestplate",
-    itemId: "archer_tunic",
-    storagePath: "human/chestplate/free/archer_tunic.glb",
+    itemId: "archer_chestplate",
+    storagePath: "human/free/archer/archer_tunic.glb",
   },
-  {
-    id: "human-squire-vest",
-    name: "Human Squire Vest",
-    description: "Simple leather vest with metal pauldrons",
-    priceInCents: 0,
-    type: "item",
-    race: "human",
-    slot: "chestplate",
-    itemId: "squire_vest",
-    storagePath: "human/chestplate/free/squire_vest.glb",
-  },
-
-  // Human Items = pants
   {
     id: "human-archer-pants",
     name: "Human Archer Pants",
@@ -124,7 +99,53 @@ export const PRODUCTS: Product[] = [
     race: "human",
     slot: "pants",
     itemId: "archer_pants",
-    storagePath: "human/pants/free/archer_pants.glb",
+    storagePath: "human/free/archer/archer_pants.glb",
+  },
+  {
+    id: "human-archer-boots",
+    name: "Human Archer Boots",
+    description: "Simple leather boots",
+    priceInCents: 0,
+    type: "item",
+    race: "human",
+    slot: "shoes",
+    itemId: "archer_shoes",
+    storagePath: "human/free/archer/archer_boots.glb",
+  },
+  {
+    id: "human-archer-bow",
+    name: "Human Archer Bow",
+    description: "Short Bow",
+    priceInCents: 0,
+    type: "item",
+    race: "human",
+    slot: "weapon",
+    itemId: "archer_bow",
+    storagePath: "human/free/archer/bow.glb",
+  },
+
+  // Human - Squire Set
+  {
+    id: "human-squire-helmet",
+    name: "Human Squire Helmet",
+    description: "A knight's squire's helmet",
+    priceInCents: 0,
+    type: "item",
+    race: "human",
+    slot: "helmet",
+    itemId: "squire_helmet",
+    storagePath: "human/free/squire/helmet.glb",
+  },
+  {
+    id: "human-squire-vest",
+    name: "Human Squire Vest",
+    description: "Simple leather vest with metal pauldrons",
+    priceInCents: 0,
+    type: "item",
+    race: "human",
+    slot: "chestplate",
+    itemId: "squire_chestplate",
+    storagePath: "human/free/squire/chestplate.glb",
   },
   {
     id: "human-squire-pants",
@@ -135,79 +156,40 @@ export const PRODUCTS: Product[] = [
     race: "human",
     slot: "pants",
     itemId: "squire_pants",
-    storagePath: "human/pants/free/squire_pants.glb",
-  },
-
-  // Human Items - shoes
-  {
-    id: "human-archer-boots",
-    name: "Human Archer Boots",
-    description: "Simple leather boots",
-    priceInCents: 0,
-    type: "item",
-    race: "human",
-    slot: "shoes",
-    itemId: "archer_boots",
-    storagePath: "human/shoes/free/archer_boots.glb",
+    storagePath: "human/free/squire/pants.glb",
   },
   {
-    id: "human-quire-vest",
+    id: "human-squire-boots",
     name: "Human Squire Boots",
     description: "Simple leather boots with some reinforcement",
     priceInCents: 0,
     type: "item",
     race: "human",
     slot: "shoes",
-    itemId: "squire_boots",
-    storagePath: "human/shoes/free/squire_boots.glb",
+    itemId: "squire_shoes",
+    storagePath: "human/free/squire/shoes.glb",
   },
-
-  // Human Items - Weapons
   {
-    id: "human-weapon-sword",
+    id: "human-squire-sword",
     name: "Human Longsword",
     description: "A classic longsword for human warriors",
-    priceInCents: 199,
+    priceInCents: 0,
     type: "item",
     race: "human",
     slot: "weapon",
-    itemId: "sword",
-    storagePath: "human/weapon/free/sword.glb",
+    itemId: "squire_sword",
+    storagePath: "human/free/squire/sword.glb",
   },
   {
-    id: "human-weapon-axe",
-    name: "Human Battle Axe",
-    description: "A powerful two-handed battle axe",
-    priceInCents: 199,
+    id: "human-squire-shield",
+    name: "Human Longsword",
+    description: "A wooden shield",
+    priceInCents: 0,
     type: "item",
     race: "human",
-    slot: "weapon",
-    itemId: "axe",
-    storagePath: "human/weapon/free/axe.glb",
-  },
-
-  // Human Items - Facial Hair
-  {
-    id: "human-beard-full",
-    name: "Human Full Beard",
-    description: "A magnificent full beard",
-    priceInCents: 199,
-    type: "item",
-    race: "human",
-    slot: "facial_hair",
-    itemId: "full",
-    storagePath: "human/facial_hair/free/full.glb",
-  },
-  {
-    id: "human-beard-goatee",
-    name: "Human Goatee",
-    description: "A stylish goatee",
-    priceInCents: 199,
-    type: "item",
-    race: "human",
-    slot: "facial_hair",
-    itemId: "goatee",
-    storagePath: "human/facial_hair/free/goatee.glb",
+    slot: "shield",
+    itemId: "sqiore_shield",
+    storagePath: "human/free/squire/shield.glb",
   },
 
   // Goblin Items - Helmets
@@ -308,52 +290,52 @@ export const PRODUCTS: Product[] = [
 
   // Themed Bundles - $4.99 (1 helmet + 1 chestplate + 1 weapon)
   // Bundles have no storagePath — their models are resolved from bundleItems
-  {
-    id: "human-knight-set",
-    name: "Knight Set",
-    description:
-      "Complete knight outfit: Knight Helmet + Plate chestplate + Battle Axe",
-    priceInCents: 499,
-    type: "bundle",
-    race: "human",
-    bundleItems: [
-      "human-helmet-knight",
-      "human-chestplate-plate",
-      "human-weapon-axe",
-    ],
-  },
-  {
-    id: "goblin-raider-set",
-    name: "Raider Set",
-    description:
-      "Complete raider outfit: Spiked Helmet + Tribal chestplate + Spiked Club",
-    priceInCents: 499,
-    type: "bundle",
-    race: "goblin",
-    bundleItems: [
-      "goblin-helmet-spiked",
-      "goblin-chestplate-tribal",
-      "goblin-weapon-club",
-    ],
-  },
+  // {
+  //   id: "human-knight-set",
+  //   name: "Knight Set",
+  //   description:
+  //     "Complete knight outfit: Knight Helmet + Plate chestplate + Battle Axe",
+  //   priceInCents: 499,
+  //   type: "bundle",
+  //   race: "human",
+  //   bundleItems: [
+  //     "human-helmet-knight",
+  //     "human-chestplate-plate",
+  //     "human-weapon-axe",
+  //   ],
+  // },
+  // {
+  //   id: "goblin-raider-set",
+  //   name: "Raider Set",
+  //   description:
+  //     "Complete raider outfit: Spiked Helmet + Tribal chestplate + Spiked Club",
+  //   priceInCents: 499,
+  //   type: "bundle",
+  //   race: "goblin",
+  //   bundleItems: [
+  //     "goblin-helmet-spiked",
+  //     "goblin-chestplate-tribal",
+  //     "goblin-weapon-club",
+  //   ],
+  // },
 
   // Complete Bundles - $23.99 (unlock everything for a race)
-  {
-    id: "human-complete-bundle",
-    name: "Human Warrior Complete Bundle",
-    description: "Unlock all customization options for human warriors",
-    priceInCents: 2399,
-    type: "complete_bundle",
-    race: "human",
-  },
-  {
-    id: "goblin-complete-bundle",
-    name: "Goblin Warrior Complete Bundle",
-    description: "Unlock all customization options for goblin warriors",
-    priceInCents: 2399,
-    type: "complete_bundle",
-    race: "goblin",
-  },
+  // {
+  //   id: "human-complete-bundle",
+  //   name: "Human Warrior Complete Bundle",
+  //   description: "Unlock all customization options for human warriors",
+  //   priceInCents: 2399,
+  //   type: "complete_bundle",
+  //   race: "human",
+  // },
+  // {
+  //   id: "goblin-complete-bundle",
+  //   name: "Goblin Warrior Complete Bundle",
+  //   description: "Unlock all customization options for goblin warriors",
+  //   priceInCents: 2399,
+  //   type: "complete_bundle",
+  //   race: "goblin",
+  // },
 ];
 
 // ─── Storage Helpers ──────────────────────────────────────────────────────────
@@ -404,6 +386,7 @@ export function resolveModelUrls(
     pants: string;
     shoes: string;
     weapon: string;
+    shield: string;
     facialHair: string;
     mount: string;
   },
@@ -413,6 +396,7 @@ export function resolveModelUrls(
   pants: string | null;
   shoes: string | null;
   weapon: string | null;
+  shield: string | null;
   facialHair: string | null;
   mount: string | null;
 } {
@@ -423,6 +407,7 @@ export function resolveModelUrls(
       | "pants"
       | "shoes"
       | "weapon"
+      | "shield"
       | "facial_hair"
       | "mount",
     itemId: string,
@@ -444,6 +429,7 @@ export function resolveModelUrls(
     pants: urlForSlot("pants", config.pants),
     shoes: urlForSlot("shoes", config.shoes),
     weapon: urlForSlot("weapon", config.weapon),
+    shield: urlForSlot("shield", config.shield),
     facialHair: urlForSlot("facial_hair", config.facialHair),
     mount: urlForSlot("mount", config.mount),
   };
