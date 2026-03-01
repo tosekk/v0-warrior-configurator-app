@@ -7,7 +7,9 @@ import {
   PerspectiveCamera,
   useGLTF,
 } from "@react-three/drei";
-import { Suspense } from "react";
+import { Suspense, useMemo } from "react";
+import { SkeletonUtils } from "three-stdlib";
+import { Loader2 } from "lucide-react";
 
 interface WarriorConfig {
   race: "human" | "goblin";
@@ -36,39 +38,46 @@ interface ModelUrls {
 
 function BaseModel({ url }: { url: string }) {
   const { scene } = useGLTF(url);
-  return <primitive object={scene.clone()} position={[0, 0, 0]} />;
+  const cloned = useMemo(() => SkeletonUtils.clone(scene), [scene]);
+  return <primitive object={cloned} position={[0, 0, 0]} />;
 }
 
 // ------ Equipment slot loaders ---------------------------------------------------------------
 
 function HelmetModel({ url }: { url: string }) {
   const { scene } = useGLTF(url);
-  return <primitive object={scene.clone()} position={[0, 0, 0]} />;
+  const cloned = useMemo(() => SkeletonUtils.clone(scene), [scene]);
+  return <primitive object={cloned} position={[0, 0, 0]} />;
 }
 
 function ArmorModel({ url }: { url: string }) {
   const { scene } = useGLTF(url);
-  return <primitive object={scene.clone()} position={[0, 0, 0]} />;
+  const cloned = useMemo(() => SkeletonUtils.clone(scene), [scene]);
+  return <primitive object={cloned} position={[0, 0, 0]} />;
 }
 
 function WeaponModel({ url }: { url: string }) {
   const { scene } = useGLTF(url);
-  return <primitive object={scene.clone()} position={[0, 0, 0]} />;
+  const cloned = useMemo(() => SkeletonUtils.clone(scene), [scene]);
+  return <primitive object={cloned} position={[0, 0, 0]} />;
 }
 
 function ShieldModel({ url }: { url: string }) {
   const { scene } = useGLTF(url);
-  return <primitive object={scene.clone()} position={[0, 0, 0]} />;
+  const cloned = useMemo(() => SkeletonUtils.clone(scene), [scene]);
+  return <primitive object={cloned} position={[0, 0, 0]} />;
 }
 
 function FacialHairModel({ url }: { url: string }) {
   const { scene } = useGLTF(url);
-  return <primitive object={scene.clone()} position={[0, 0, 0]} />;
+  const cloned = useMemo(() => SkeletonUtils.clone(scene), [scene]);
+  return <primitive object={cloned} position={[0, 0, 0]} />;
 }
 
 function MountModel({ url }: { url: string }) {
   const { scene } = useGLTF(url);
-  return <primitive object={scene.clone()} position={[0, 0, 0]} />;
+  const cloned = useMemo(() => SkeletonUtils.clone(scene), [scene]);
+  return <primitive object={cloned} position={[0, 0, 0]} />;
 }
 
 // ----- Full warrior assembly ------------------------------------------------------------------
@@ -84,31 +93,49 @@ function WarriorModel({
 }) {
   return (
     <group>
-      <BaseModel url={baseUrl} />
+      <ModelErrorBoundary>
+        <BaseModel url={baseUrl} />
+      </ModelErrorBoundary>
 
       {config.helmet !== "none" && modelUrls.helmet && (
-        <HelmetModel url={modelUrls.helmet} />
+        <ModelErrorBoundary>
+          <HelmetModel url={modelUrls.helmet} />
+        </ModelErrorBoundary>
       )}
       {config.chestplate !== "none" && modelUrls.chestplate && (
-        <ArmorModel url={modelUrls.chestplate} />
+        <ModelErrorBoundary>
+          <ArmorModel url={modelUrls.chestplate} />
+        </ModelErrorBoundary>
       )}
       {config.pants !== "none" && modelUrls.pants && (
-        <ArmorModel url={modelUrls.pants} />
+        <ModelErrorBoundary>
+          <ArmorModel url={modelUrls.pants} />
+        </ModelErrorBoundary>
       )}
       {config.shoes !== "none" && modelUrls.shoes && (
-        <ArmorModel url={modelUrls.shoes} />
+        <ModelErrorBoundary>
+          <ArmorModel url={modelUrls.shoes} />
+        </ModelErrorBoundary>
       )}
       {config.weapon !== "none" && modelUrls.weapon && (
-        <WeaponModel url={modelUrls.weapon} />
+        <ModelErrorBoundary>
+          <WeaponModel url={modelUrls.weapon} />
+        </ModelErrorBoundary>
       )}
       {config.shield !== "none" && modelUrls.shield && (
-        <ShieldModel url={modelUrls.shield} />
+        <ModelErrorBoundary>
+          <ShieldModel url={modelUrls.shield} />
+        </ModelErrorBoundary>
       )}
       {config.facialHair !== "none" && modelUrls.facialHair && (
-        <FacialHairModel url={modelUrls.facialHair} />
+        <ModelErrorBoundary>
+          <FacialHairModel url={modelUrls.facialHair} />
+        </ModelErrorBoundary>
       )}
       {config.mount !== "none" && modelUrls.mount && (
-        <MountModel url={modelUrls.mount} />
+        <ModelErrorBoundary>
+          <MountModel url={modelUrls.mount} />
+        </ModelErrorBoundary>
       )}
     </group>
   );

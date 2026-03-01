@@ -100,7 +100,7 @@ export function validateItemOwnership(
       "squire_sword",
       "swiss_halberd",
     ],
-    shield: ["none", "squire_shield"],
+    shield: ["none", "squire_shield", "round_shield", "tower_shield"],
     facial_hair: ["none"],
     mount: ["none"],
   };

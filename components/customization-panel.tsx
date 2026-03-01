@@ -37,7 +37,7 @@ const FREE_ITEMS = {
     "none",
     "archer_chestplate",
     "squire_chestplate",
-    "swiss_chestpate",
+    "swiss_chestplate",
   ],
   pants: ["none", "archer_pants", "squire_pants", "swiss_pants"],
   shoes: ["none", "archer_shoes", "squire_shoes", "swiss_shoes"],
@@ -53,7 +53,7 @@ const FREE_ITEMS = {
     "squire_sword",
     "swiss_halberd",
   ],
-  shield: ["none", "squire_shield", "round_shield"],
+  shield: ["none", "squire_shield", "tower_shied", "round_shield"],
   facial_hair: ["none"],
   mount: ["none"],
 };
