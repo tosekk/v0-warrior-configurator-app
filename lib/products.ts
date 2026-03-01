@@ -410,7 +410,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "goblin-swiss-halberd",
-    name: "Goblin Rusty Dagger",
+    name: "Goblin Swiss Halberd",
     description: "A swiss halberd",
     priceInCents: 199,
     type: "item",
