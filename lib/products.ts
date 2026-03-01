@@ -399,7 +399,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "goblin-swiss-chestplate",
-    name: "Goblin Swiss Chesplate",
+    name: "Goblin Swiss Chestplate",
     description: "A swiss chestplate",
     priceInCents: 199,
     type: "item",
