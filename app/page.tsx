@@ -456,7 +456,7 @@ export default function Home() {
             <WarriorScene
               config={{ race, ...config }}
               modelUrls={resolveModelUrls(race, config)}
-              baseModelUrl={resolveBaseModelUrl(race)}
+              baseModelUrl={resolveBaseModelUrl(race, config.weapon)}
             />
           </Card>
 

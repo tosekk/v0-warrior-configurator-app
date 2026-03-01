@@ -487,6 +487,26 @@ export const PRODUCTS: Product[] = [
 //     Use this in Server Components or Route Handlers.
 //     Works for both public and private buckets.
 
+export type PoseType = "default" | "stretched_hand";
+
+export const WEAPON_POSE_MAP: Record<string, PoseType> = {
+  archer_bow: "default",
+  squire_sword: "stretched_hand",
+  bat: "stretched_hand",
+  dagger: "stretched_hand",
+  mace: "stretched_hand",
+  spiky_bat: "stretched_hand",
+  spear: "stretched_hand",
+  staff: "stretched_hand",
+  swiss_halberd: "stretched_hand",
+  greek_sword: "stretched_hand",
+  greek_spear: "stretched_hand",
+};
+
+export function getWeaponPose(weaponItemId: string): PoseType {
+  return WEAPON_POSE_MAP[weaponItemId] ?? "default";
+}
+
 /**
  * Client-safe public URL helper — no Supabase client required.
  * Builds the URL directly from NEXT_PUBLIC_SUPABASE_URL.
@@ -503,9 +523,14 @@ export function getPublicModelUrl(product: Product): string | null {
  * Resolves the base body model URL for a given race.
  * Safe to call from 'use client' components.
  */
-export function resolveBaseModelUrl(race: "human" | "goblin"): string | null {
-  const product = PRODUCTS.find((p) => p.race === race && p.slot === "base");
-  return product ? getPublicModelUrl(product) : null;
+export function resolveBaseModelUrl(
+  race: "human" | "goblin",
+  weaponItemId: string = "none",
+): string | null {
+  const pose = getWeaponPose(weaponItemId);
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!supabaseUrl) return null;
+  return `${supabaseUrl}/storage/v1/object/public/${BUCKET}/${race}/base_${pose}.glb`;
 }
 
 /**
@@ -571,7 +596,7 @@ export function resolveModelUrls(
 }
 
 // ─── Product Lookup Helpers ───────────────────────────────────────────────────
-
+//
 export function getProductById(id: string) {
   return PRODUCTS.find((p) => p.id === id);
 }
