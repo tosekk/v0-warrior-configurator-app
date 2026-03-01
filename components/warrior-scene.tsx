@@ -36,7 +36,7 @@ interface ModelUrls {
 
 function BaseModel({ url }: { url: string }) {
   const { scene } = useGLTF(url);
-  return <primitive object={scene.clone()} prosition={[0, 0, 0]} />;
+  return <primitive object={scene.clone()} position={[0, 0, 0]} />;
 }
 
 // ------ Equipment slot loaders ---------------------------------------------------------------

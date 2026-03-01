@@ -79,13 +79,29 @@ export function validateItemOwnership(
 
   // Free items per slot
   const freeItems = {
-    helmet: ["none", "archer_hood", "squire_helmet"],
-    chestplate: ["none", "archer_chestplate", "squire_chestplate"],
-    pants: ["none", "archer_pants", "squire_pants"],
-    shoes: ["none", "archer_shoes", "squrie_shoes"],
-    weapon: ["none", "archer_bow", "squire_sword"],
+    helmet: ["none", "archer_hood", "squire_helmet", "swiss_helmet"],
+    chestplate: [
+      "none",
+      "archer_chestplate",
+      "squire_chestplate",
+      "swiss_chestplate",
+    ],
+    pants: ["none", "archer_pants", "squire_pants", "swiss_pants"],
+    shoes: ["none", "archer_shoes", "squire_shoes", "swiss_shoes"],
+    weapon: [
+      "none",
+      "bat",
+      "dagger",
+      "mace",
+      "spiky_bat",
+      "spear",
+      "staff",
+      "archer_bow",
+      "squire_sword",
+      "swiss_halberd",
+    ],
     shield: ["none", "squire_shield"],
-    facial_hair: ["none", "full"],
+    facial_hair: ["none"],
     mount: ["none"],
   };
 
