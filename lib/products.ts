@@ -337,7 +337,7 @@ export const PRODUCTS: Product[] = [
     type: "item",
     race: "human",
     slot: "weapon",
-    itemId: "squire_sword",
+    itemId: "greek_sword",
     storagePath: "human/paid/greek/sword.glb",
   },
   {
@@ -388,7 +388,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "goblin-swiss-pants",
-    name: "Human Swiss Pants",
+    name: "Goblin Swiss Pants",
     description: "A swiss pants",
     priceInCents: 199,
     type: "item",
@@ -399,7 +399,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "human-swiss-boots",
-    name: "Human Swiss Boots",
+    name: "Goblin Swiss Boots",
     description: "A pair of swiss boots",
     priceInCents: 199,
     type: "item",
@@ -431,7 +431,7 @@ export const PRODUCTS: Product[] = [
     race: "human",
     bundleItems: [
       "human-greek-helmet",
-      "human-greek-chesplate",
+      "human-greek-chestplate",
       "human-greek-skirt",
       "human-greek-boots",
       "human-greek-spear",
