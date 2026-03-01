@@ -420,7 +420,7 @@ export const PRODUCTS: Product[] = [
     storagePath: "goblin/free/swiss/pants.glb",
   },
   {
-    id: "human-swiss-boots",
+    id: "goblin-swiss-boots",
     name: "Goblin Swiss Boots",
     description: "A pair of swiss boots",
     priceInCents: 199,
@@ -550,9 +550,11 @@ export function resolveBaseModelUrl(
   weaponItemId: string = "none",
 ): string | null {
   const pose = getWeaponPose(weaponItemId);
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  if (!supabaseUrl) return null;
-  return `${supabaseUrl}/storage/v1/object/public/${BUCKET}/${race}/base_${pose}.glb`;
+  const product = PRODUCTS.find(
+    (p) =>
+      p.race === race && p.slot === "base" && p.id === `${race}_base_${pose}`,
+  );
+  return product ? getPublicModelUrl(product) : null;
 }
 
 /**
