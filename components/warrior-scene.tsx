@@ -67,7 +67,12 @@ class ModelErrorBoundary extends Component<
 
 function GltfModel({ url }: { url: string }) {
   const { scene } = useGLTF(url);
-  return <primitive object={scene.clone()} position={[0, 0, 0]} />;
+  const cloned = useMemo(
+    () => (scene ? SkeletonUtils.clone(scene) : null),
+    [scene],
+  );
+  if (!cloned) return null;
+  return <primitive object={cloned} position={[0, 0, 0]} />;
 }
 
 // ----- Full warrior assembly ------------------------------------------------------------------

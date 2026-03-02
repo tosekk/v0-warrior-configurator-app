@@ -552,7 +552,7 @@ export function resolveBaseModelUrl(
   const pose = getWeaponPose(weaponItemId);
   const product = PRODUCTS.find(
     (p) =>
-      p.race === race && p.slot === "base" && p.id === `${race}_base_${pose}`,
+      p.race === race && p.slot === "base" && p.id === `${race}-base-${pose}`,
   );
   return product ? getPublicModelUrl(product) : null;
 }
