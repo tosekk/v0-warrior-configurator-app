@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Lock, ShoppingCart } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import {
   getItemsBySlot,
   getThemedBundleByRace,
@@ -25,22 +25,8 @@ interface CustomizationPanelProps {
     mount: string;
   };
   ownedItems: string[];
-  previewItem: {
-    id: string;
-    slot: string;
-    itemId: string;
-    name: string;
-    priceInCents: number;
-  } | null;
   onConfigChange: (slot: string, value: string) => void;
   onPurchase: (productId: string) => void;
-  onPreview: (item: {
-    id: string;
-    slot: string;
-    itemId: string;
-    name: string;
-    priceInCents: number;
-  }) => void;
   onPurchaseThemedBundle: () => void;
   onPurchaseCompleteBundle: () => void;
 }
@@ -67,7 +53,7 @@ const FREE_ITEMS = {
     "squire_sword",
     "swiss_halberd",
   ],
-  shield: ["none", "squire_shield", "tower_shied", "round_shield"],
+  shield: ["none", "squire_shield", "tower_shield", "round_shield"],
   facial_hair: ["none"],
   mount: ["none"],
 };
@@ -75,7 +61,7 @@ const FREE_ITEMS = {
 const SLOT_LABELS = {
   helmet: "Helmets",
   facial_hair: "Facial Hair",
-  chestplate: "Armor",
+  chestplate: "Chestplate",
   pants: "Pants",
   shoes: "Shoes",
   weapon: "Weapons",
@@ -87,10 +73,8 @@ export function CustomizationPanel({
   race,
   config,
   ownedItems,
-  previewItem,
   onConfigChange,
   onPurchase,
-  onPreview,
   onPurchaseThemedBundle,
   onPurchaseCompleteBundle,
 }: CustomizationPanelProps) {
@@ -128,39 +112,18 @@ export function CustomizationPanel({
             item.itemId || "",
           );
           const isOwned = ownedItems.includes(item.id);
-          const isLocked = !isFree && !isOwned;
-          const isPreviewing = previewItem?.id === item.id;
           const isSelected =
-            !previewItem && config[slot as keyof typeof config] === item.itemId;
+            config[slot as keyof typeof config] === item.itemId;
 
           return (
             <Card
               key={item.id}
               className={`p-3 cursor-pointer transition-colors ${
-                isPreviewing
-                  ? "border-amber-500 bg-amber-500/10"
-                  : isSelected
-                    ? "border-primary bg-primary/10"
-                    : isLocked
-                      ? "opacity-60"
-                      : "hover:bg-muted/50"
+                isSelected
+                  ? "border-primary bg-primary/10"
+                  : "hover:bg-muted/50"
               }`}
-              onClick={() => {
-                if (!isLocked) {
-                  onConfigChange(slot, item.itemId || "");
-                } else {
-                  onPreview({
-                    id: item.id,
-                    slot,
-                    itemId: item.itemId || "",
-                    name: item.name.replace(
-                      `${race === "human" ? "Human" : "Goblin"} `,
-                      "",
-                    ),
-                    priceInCents: item.priceInCents,
-                  });
-                }
-              }}
+              onClick={() => onConfigChange(slot, item.itemId || "")}
             >
               <div className="flex items-center justify-between">
                 <div className="flex-1">
@@ -171,17 +134,6 @@ export function CustomizationPanel({
                         "",
                       )}
                     </p>
-                    {isPreviewing && (
-                      <Badge
-                        variant="outline"
-                        className="border-amber-500 text-amber-500 text-xs"
-                      >
-                        Previewing
-                      </Badge>
-                    )}
-                    {isPreviewing && isLocked && (
-                      <Lock className="h-4 w-4 text-muted-foreground" />
-                    )}
                   </div>
                   <p className="text-xs text-muted-foreground">
                     {item.description}
@@ -196,7 +148,7 @@ export function CustomizationPanel({
                   ) : (
                     <Button
                       size="sm"
-                      variant="outline"
+                      className="bg-transparent border border-amber-500/50 text-amber-400 hover:bg-amber-500 hover:text-slate-950 hover:border-amber-500"
                       onClick={(e) => {
                         e.stopPropagation();
                         onPurchase(item.id);
@@ -263,7 +215,10 @@ export function CustomizationPanel({
       )}
 
       {/* Slot Tabs */}
-      <div className="flex border-b overflow-x-auto">
+      <div
+        className="flex border-b overflow-x-auto"
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+      >
         {Object.entries(SLOT_LABELS).map(([slot, label]) => (
           <button
             key={slot}

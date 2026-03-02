@@ -93,7 +93,7 @@ export default function Home() {
       const savedRace = configData.race as "human" | "goblin";
       const loadedConfig = {
         helmet: configData.helmet || "none",
-        chesplate: configData.chestplate || "none",
+        chestplate: configData.chestplate || "none",
         pants: configData.pants || "none",
         shoes: configData.shoes || "none",
         weapon: configData.weapon || "none",

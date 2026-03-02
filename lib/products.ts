@@ -509,20 +509,20 @@ export const PRODUCTS: Product[] = [
 //     Use this in Server Components or Route Handlers.
 //     Works for both public and private buckets.
 
-export type PoseType = "default" | "stretched_hand";
+export type PoseType = "default" | "stretched-hand";
 
 export const WEAPON_POSE_MAP: Record<string, PoseType> = {
   archer_bow: "default",
-  squire_sword: "stretched_hand",
-  bat: "stretched_hand",
-  dagger: "stretched_hand",
-  mace: "stretched_hand",
-  spiky_bat: "stretched_hand",
-  spear: "stretched_hand",
-  staff: "stretched_hand",
-  swiss_halberd: "stretched_hand",
-  greek_sword: "stretched_hand",
-  greek_spear: "stretched_hand",
+  squire_sword: "stretched-hand",
+  bat: "stretched-hand",
+  dagger: "stretched-hand",
+  mace: "stretched-hand",
+  spiky_bat: "stretched-hand",
+  spear: "stretched-hand",
+  staff: "default",
+  swiss_halberd: "stretched-hand",
+  greek_sword: "stretched-hand",
+  greek_spear: "stretched-hand",
 };
 
 export function getWeaponPose(weaponItemId: string): PoseType {

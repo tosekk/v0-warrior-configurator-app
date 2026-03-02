@@ -7,9 +7,17 @@ import {
   PerspectiveCamera,
   useGLTF,
 } from "@react-three/drei";
-import { Suspense, useMemo, Component, ReactNode } from "react";
+import {
+  Suspense,
+  useMemo,
+  Component,
+  ReactNode,
+  useEffect,
+  useRef,
+} from "react";
 import { SkeletonUtils } from "three-stdlib";
 import { Loader2 } from "lucide-react";
+import * as THREE from "three";
 
 interface WarriorConfig {
   race: "human" | "goblin";
@@ -65,14 +73,44 @@ class ModelErrorBoundary extends Component<
 
 // ----- Generic Model Loader --------------------------------------------------------------------
 
-function GltfModel({ url }: { url: string }) {
-  const { scene } = useGLTF(url);
-  const cloned = useMemo(
-    () => (scene ? SkeletonUtils.clone(scene) : null),
-    [scene],
-  );
-  if (!cloned) return null;
-  return <primitive object={cloned} position={[0, 0, 0]} />;
+function GltfModel({
+  url,
+  animationName,
+  timeOffset = 1,
+}: {
+  url: string;
+  animationName?: string;
+  timeOffset?: number;
+}) {
+  const { scene, animations } = useGLTF(url);
+  const cloned = useMemo(() => SkeletonUtils.clone(scene), [scene]);
+
+  useEffect(() => {
+    if (!animations || animations.length === 0) return;
+
+    const clip = animationName
+      ? THREE.AnimationClip.findByName(animations, animationName)
+      : animations[0];
+
+    if (!clip) return;
+
+    const mixer = new THREE.AnimationMixer(cloned);
+    const action = mixer.clipAction(clip);
+
+    action.setLoop(THREE.LoopOnce, 1);
+    action.clampWhenFinished = true;
+    action.play();
+
+    mixer.update(timeOffset);
+    action.paused = true;
+
+    return () => {
+      mixer.stopAllAction();
+      mixer.uncacheRoot(cloned);
+    };
+  }, [cloned, animations, animationName, timeOffset]);
+
+  return <primitive object={cloned} />;
 }
 
 // ----- Full warrior assembly ------------------------------------------------------------------
@@ -105,8 +143,8 @@ function WarriorModel({
 
       {slots.map(({ key, value }) =>
         value !== "none" && modelUrls[key] ? (
-          <ModelErrorBoundary>
-            <GltfModel url={modelUrls[key]!} />
+          <ModelErrorBoundary key={key}>
+            <GltfModel url={modelUrls[key]!} timeOffset={1} />
           </ModelErrorBoundary>
         ) : null,
       )}
