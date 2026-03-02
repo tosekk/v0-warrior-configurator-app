@@ -25,8 +25,22 @@ interface CustomizationPanelProps {
     mount: string;
   };
   ownedItems: string[];
+  previewItem: {
+    id: string;
+    slot: string;
+    itemId: string;
+    name: string;
+    priceInCents: number;
+  } | null;
   onConfigChange: (slot: string, value: string) => void;
   onPurchase: (productId: string) => void;
+  onPreview: (item: {
+    id: string;
+    slot: string;
+    itemId: string;
+    name: string;
+    priceInCents: number;
+  }) => void;
   onPurchaseThemedBundle: () => void;
   onPurchaseCompleteBundle: () => void;
 }
@@ -73,8 +87,10 @@ export function CustomizationPanel({
   race,
   config,
   ownedItems,
+  previewItem,
   onConfigChange,
   onPurchase,
+  onPreview,
   onPurchaseThemedBundle,
   onPurchaseCompleteBundle,
 }: CustomizationPanelProps) {
@@ -113,22 +129,36 @@ export function CustomizationPanel({
           );
           const isOwned = ownedItems.includes(item.id);
           const isLocked = !isFree && !isOwned;
+          const isPreviewing = previewItem?.id === item.id;
           const isSelected =
-            config[slot as keyof typeof config] === item.itemId;
+            !previewItem && config[slot as keyof typeof config] === item.itemId;
 
           return (
             <Card
               key={item.id}
               className={`p-3 cursor-pointer transition-colors ${
-                isSelected
-                  ? "border-primary bg-primary/10"
-                  : isLocked
-                    ? "opacity-60"
-                    : "hover:bg-muted/50"
+                isPreviewing
+                  ? "border-amber-500 bg-amber-500/10"
+                  : isSelected
+                    ? "border-primary bg-primary/10"
+                    : isLocked
+                      ? "opacity-60"
+                      : "hover:bg-muted/50"
               }`}
               onClick={() => {
                 if (!isLocked) {
                   onConfigChange(slot, item.itemId || "");
+                } else {
+                  onPreview({
+                    id: item.id,
+                    slot,
+                    itemId: item.itemId || "",
+                    name: item.name.replace(
+                      `${race === "human" ? "Human" : "Goblin"} `,
+                      "",
+                    ),
+                    priceInCents: item.priceInCents,
+                  });
                 }
               }}
             >
@@ -141,7 +171,15 @@ export function CustomizationPanel({
                         "",
                       )}
                     </p>
-                    {isLocked && (
+                    {isPreviewing && (
+                      <Badge
+                        variant="outline"
+                        className="border-amber-500 text-amber-500 text-xs"
+                      >
+                        Previewing
+                      </Badge>
+                    )}
+                    {isPreviewing && isLocked && (
                       <Lock className="h-4 w-4 text-muted-foreground" />
                     )}
                   </div>
@@ -180,43 +218,49 @@ export function CustomizationPanel({
   return (
     <div className="h-full flex flex-col">
       {/* Bundle Purchase Section */}
-      <div className="p-4 border-b bg-muted/30 space-y-3">
-        {/* Themed Bundle */}
-        <Card className="p-4 bg-gradient-to-br from-accent/20 to-accent/5 border-accent/50">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex-1">
-              <h3 className="font-bold">{themedBundle?.name}</h3>
-              <p className="text-xs text-muted-foreground mt-1">
-                {themedBundle?.description}
-              </p>
-            </div>
-            <Button onClick={onPurchaseThemedBundle} size="sm">
-              <ShoppingCart className="h-3 w-3 mr-1" />$
-              {themedBundle
-                ? (themedBundle.priceInCents / 100).toFixed(2)
-                : "4.99"}
-            </Button>
-          </div>
-        </Card>
+      {(themedBundle || completeBundle) && (
+        <div className="p-4 border-b bg-muted/30 space-y-3">
+          {/* Themed Bundle */}
+          {themedBundle && (
+            <Card className="p-4 bg-gradient-to-br from-accent/20 to-accent/5 border-accent/50">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1">
+                  <h3 className="font-bold">{themedBundle?.name}</h3>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {themedBundle?.description}
+                  </p>
+                </div>
+                <Button onClick={onPurchaseThemedBundle} size="sm">
+                  <ShoppingCart className="h-3 w-3 mr-1" />$
+                  {themedBundle
+                    ? (themedBundle.priceInCents / 100).toFixed(2)
+                    : "4.99"}
+                </Button>
+              </div>
+            </Card>
+          )}
 
-        {/* Complete Bundle */}
-        <Card className="p-4 bg-gradient-to-br from-primary/20 to-primary/5 border-primary/50">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex-1">
-              <h3 className="font-bold text-lg">{completeBundle?.name}</h3>
-              <p className="text-sm text-muted-foreground mt-1">
-                {completeBundle?.description}
-              </p>
-            </div>
-            <Button onClick={onPurchaseCompleteBundle} size="lg">
-              <ShoppingCart className="h-4 w-4 mr-2" />$
-              {completeBundle
-                ? (completeBundle.priceInCents / 100).toFixed(2)
-                : "23.99"}
-            </Button>
-          </div>
-        </Card>
-      </div>
+          {/* Complete Bundle */}
+          {completeBundle && (
+            <Card className="p-4 bg-gradient-to-br from-primary/20 to-primary/5 border-primary/50">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1">
+                  <h3 className="font-bold text-lg">{completeBundle?.name}</h3>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {completeBundle?.description}
+                  </p>
+                </div>
+                <Button onClick={onPurchaseCompleteBundle} size="lg">
+                  <ShoppingCart className="h-4 w-4 mr-2" />$
+                  {completeBundle
+                    ? (completeBundle.priceInCents / 100).toFixed(2)
+                    : "23.99"}
+                </Button>
+              </div>
+            </Card>
+          )}
+        </div>
+      )}
 
       {/* Slot Tabs */}
       <div className="flex border-b overflow-x-auto">
